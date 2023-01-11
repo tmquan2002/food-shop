@@ -36,12 +36,14 @@ function MainNavbar() {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
+            <AppBar>
                 <Toolbar>
-                    <ShoppingCartIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>MY SHOP</Link>
                     </Typography>
+                    <IconButton color="inherit" size='large'>
+                        <ShoppingCartIcon/>
+                    </IconButton>
                     {user.status === 'loading' ? <CircularProgress color="inherit" /> :
                         <>
                             {!user.user.login ?

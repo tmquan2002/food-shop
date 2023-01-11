@@ -9,6 +9,9 @@ const theme = createTheme({
     primary: {
       main: deepOrange[500],
     },
+    secondary: {
+      main: deepOrange[300],
+    },
   },
 });
 
