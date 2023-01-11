@@ -3,6 +3,8 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { useEffect, useState } from 'react';
 import { Card, CardActions, CardMedia, CardContent, Button } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { homeSlice } from './homeSlices'
 
 export default function HomeList(props) {
 
@@ -12,6 +14,21 @@ export default function HomeList(props) {
     const [page, setPage] = useState(1);
     const [render, setRender] = useState(false)
     const [renderCount, setRenderCount] = useState(0)
+    const dispatch = useDispatch()
+    const cart = useSelector((state) => state.manageHome.cart)
+
+    const handleBuy = (data) => {
+        let temp = {
+            id: data.id,
+            name: data.name,
+            type: data.type,
+            quantity: 1,
+            price: data.price,
+            sale: data.sale,
+            image: data.image
+        }
+        dispatch(homeSlice.actions.addToCart(temp))
+    }
 
     useEffect(() => {
         async function fetchList() {
@@ -62,7 +79,7 @@ export default function HomeList(props) {
                                 <CardActions>
                                     <Button size="small" color='inherit' onClick={() => { }}><strong>More Detail</strong></Button>
                                     {v.quantity === '0' ? <Button disabled size="small"><strong>Sold Out</strong></Button>
-                                        : <Button size="small" color='secondary' onClick={() => { }}><strong>Buy</strong></Button>}
+                                        : <Button size="small" color='secondary' onClick={() => handleBuy(v)}><strong>Buy</strong></Button>}
                                 </CardActions>
                             </Card>
                         </div>

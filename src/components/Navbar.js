@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { userSlice } from '../components/login/slices'
-import { CircularProgress } from '@mui/material';
+import { Badge, CircularProgress, Divider } from '@mui/material';
 
 
 function MainNavbar() {
@@ -21,6 +21,7 @@ function MainNavbar() {
 
     const dispatch = useDispatch()
     const user = useSelector((state) => state.loginUser)
+    const cart = useSelector((state) => state.manageHome.cart)
 
     const handleLogout = () => {
         dispatch(userSlice.actions.logoutUser())
@@ -41,8 +42,10 @@ function MainNavbar() {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>MY SHOP</Link>
                     </Typography>
-                    <IconButton color="inherit" size='large'>
-                        <ShoppingCartIcon/>
+                    <IconButton color="inherit" sx={{ marginRight: 3/2, backgroundColor: 'secondary.main' }}>
+                        <Badge badgeContent={cart.length} color="error">
+                            <ShoppingCartIcon />
+                        </Badge>
                     </IconButton>
                     {user.status === 'loading' ? <CircularProgress color="inherit" /> :
                         <>
@@ -78,6 +81,7 @@ function MainNavbar() {
                                                 <Button><Link to="/checkout" style={{ color: 'black', textDecoration: 'none' }}>CHECKOUT</Link></Button>
                                             </MenuItem>
                                         }
+                                        <Divider />
                                         <MenuItem key="Logout" onClick={handleClose}>
                                             <Button variant="text" style={{ color: 'black', textDecoration: 'none' }} onClick={handleLogout}>SIGN OUT</Button>
                                         </MenuItem>

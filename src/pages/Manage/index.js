@@ -5,8 +5,8 @@ import { useSelector } from 'react-redux';
 import { Navigate } from "react-router-dom";
 
 export default function Manage() {
-    const login = useSelector((state) => state.loginUser.user.login)
-    if (login) {
+    const user = useSelector((state) => state.loginUser.user)
+    if (user.login && user.role === "ADMIN") {
         return (
             <>
                 <MainNavbar />

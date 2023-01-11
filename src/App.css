@@ -30,9 +30,15 @@
 }
 
 /* Home Page */
+.search-bar {
+    width: 50%;
+    margin: 5rem auto 1rem auto;
+    text-align: center;
+}
+
 .main-list {
     width: 50%;
-    margin: 5rem auto 2rem auto;
+    margin: 1rem auto;
     text-align: center;
 }
 

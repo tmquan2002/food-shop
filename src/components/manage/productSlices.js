@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const productSlice = createSlice({
     name: 'manageProductFeatures',
-    //2 states: View, Add, Update
+    //3 states: View, Add, Update
     initialState: {
         currentProduct: {
             id: '-1',
