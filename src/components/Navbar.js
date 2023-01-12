@@ -9,7 +9,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { userSlice } from '../components/login/slices'
@@ -20,6 +20,7 @@ function MainNavbar() {
     const [openMenu, setOpenMenu] = useState(null);
 
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const user = useSelector((state) => state.loginUser)
     const cart = useSelector((state) => state.manageHome.cart)
 
@@ -42,7 +43,7 @@ function MainNavbar() {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>MY SHOP</Link>
                     </Typography>
-                    <IconButton color="inherit" sx={{ marginRight: 3/2, backgroundColor: 'secondary.main' }}>
+                    <IconButton color="inherit" sx={{ marginRight: 3/2, backgroundColor: 'secondary.main' }} onClick={() => { navigate(`/cart`) }}>
                         <Badge badgeContent={cart.length} color="error">
                             <ShoppingCartIcon />
                         </Badge>
@@ -77,8 +78,8 @@ function MainNavbar() {
                                                 <Button><Link to="/dashboard" style={{ color: 'black', textDecoration: 'none' }}>DASHBOARD</Link></Button>
                                             </MenuItem>
                                             :
-                                            <MenuItem key="Checkout" onClick={handleClose}>
-                                                <Button><Link to="/checkout" style={{ color: 'black', textDecoration: 'none' }}>CHECKOUT</Link></Button>
+                                            <MenuItem key="Order" onClick={handleClose}>
+                                                <Button><Link to="/orders" style={{ color: 'black', textDecoration: 'none' }}>YOUR ORDERS</Link></Button>
                                             </MenuItem>
                                         }
                                         <Divider />

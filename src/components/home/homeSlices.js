@@ -14,13 +14,7 @@ export const homeSlice = createSlice({
         },
         searchValue: "",
         searchType: "",
-        cart: [],
-        notification: {
-            message: '',
-            open: false
-        },
-        //Home, Cart, Detail
-        pageState: "home"
+        cart: []
     },
     reducers: {
         addToCart: (state, action) => {
@@ -38,6 +32,13 @@ export const homeSlice = createSlice({
         removeFromCart: (state, action) => {
             state.cart = state.value.filter((item) => item.id !== action.payload.id);
         },
+        changeQuantity: (state, action) => {
+            for (let i = 0; i < state.cart.length; i++) {
+                if (state.cart[i].id === action.payload.id) {
+                    state.cart[i].quantity = action.payload.quantity
+                }
+            }
+        },
         changeSearchValue: (state, action) => {
             state.searchValue = action.payload
         },
@@ -48,5 +49,8 @@ export const homeSlice = createSlice({
                 state.searchType = action.payload
             }
         },
+        viewCurrentProduct: (state, action) => {
+            state.currentProduct = action.payload
+        }
     }
 })

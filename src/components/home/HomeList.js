@@ -2,9 +2,10 @@ import Typography from '@mui/material/Typography';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { useEffect, useState } from 'react';
-import { Card, CardActions, CardMedia, CardContent, Button } from '@mui/material';
+import { Card, CardActions, CardMedia, CardContent, Button, Skeleton } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { homeSlice } from './homeSlices'
+import { notiAndSwitchPageSlices } from './notiAndSwitchPageSlices';
 
 export default function HomeList(props) {
 
@@ -18,6 +19,11 @@ export default function HomeList(props) {
     const searchValue = useSelector((state) => state.manageHome.searchValue)
     const searchType = useSelector((state) => state.manageHome.searchType)
 
+    const handleDetail = (data) => {
+        dispatch(homeSlice.actions.viewCurrentProduct(data))
+        dispatch(notiAndSwitchPageSlices.actions.switchPage("detail"))
+    }
+
     const handleBuy = (data) => {
         let temp = {
             id: data.id,
@@ -29,6 +35,7 @@ export default function HomeList(props) {
             image: data.image
         }
         dispatch(homeSlice.actions.addToCart(temp))
+        dispatch(notiAndSwitchPageSlices.actions.setMessageNotification("Product Added!"))
     }
 
     useEffect(() => {
@@ -82,7 +89,7 @@ export default function HomeList(props) {
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
-                                    <Button size="small" color='inherit' onClick={() => { }}><strong>More Detail</strong></Button>
+                                    <Button size="small" color='inherit' onClick={() => handleDetail(v)}><strong>More Detail</strong></Button>
                                     {v.quantity === '0' ? <Button disabled size="small"><strong>Sold Out</strong></Button>
                                         : <Button size="small" color='secondary' onClick={() => handleBuy(v)}><strong>Buy</strong></Button>}
                                 </CardActions>
@@ -93,8 +100,11 @@ export default function HomeList(props) {
                 <div className="data-list-container">
                     <Pagination color='primary' count={totalPages} page={page} onChange={(e, value) => setPage(value)} />
                 </div>
-            </Stack> : <></>
-            }
+            </Stack> :
+                <div className='main-list'>
+                    <Skeleton variant="rounded" width={500} height={300} />
+                </div>
+            }            
         </div>
     );
 }

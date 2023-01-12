@@ -1,10 +1,10 @@
 import MainNavbar from "../../components/Navbar";
 
-export default function Checkout() {
+export default function Orders() {
     return (
         <>
             <MainNavbar />
-            Checkout Page Testing
+            Order Page Testing
         </>
     )
 }

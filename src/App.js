@@ -1,5 +1,5 @@
 import './App.css';
-import { HomePage, Checkout, GoogleLogin, Manage } from './pages/routes';
+import { HomeMainPage, Checkout, GoogleLogin, Manage, CartPage } from './pages/routes';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { deepOrange } from '@mui/material/colors';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -20,8 +20,9 @@ function App() {
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/" element={<HomeMainPage />} />
+          <Route path="/orders" element={<Checkout />} />
+          <Route path="/cart" element={<CartPage />} />
           <Route path="/login" element={<GoogleLogin />} />
           <Route path="/dashboard" element={<Manage />} />
         </Routes>

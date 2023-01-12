@@ -51,3 +51,8 @@
 .card-data {
     margin: 2%;
 }
+
+.main-home-detail-container {
+    width: 70%;
+    margin: 7rem auto 1rem auto;
+}
