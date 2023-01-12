@@ -15,7 +15,8 @@ export default function HomeList(props) {
     const [render, setRender] = useState(false)
     const [renderCount, setRenderCount] = useState(0)
     const dispatch = useDispatch()
-    const cart = useSelector((state) => state.manageHome.cart)
+    const searchValue = useSelector((state) => state.manageHome.searchValue)
+    const searchType = useSelector((state) => state.manageHome.searchType)
 
     const handleBuy = (data) => {
         let temp = {
@@ -35,8 +36,12 @@ export default function HomeList(props) {
             const response = await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product`)
                 .then((res) => res.json())
                 .catch((error) => { console.log(error) })
-            //
-            const data = props.sale ? response.filter(e => e.sale) : response
+
+            //Check sale, check search word and search types
+            const data = (props.sale ? response.filter(e => e.sale) : response)
+                .filter(s => s.name.toLowerCase().includes(searchValue.toLowerCase())
+                    && s.type.toLowerCase().includes(searchType.toLowerCase()))
+
             var arrays = []
             setTotalPages(Math.ceil(data.length / itemsPerPage))
             if (data.length <= itemsPerPage) {
@@ -51,7 +56,7 @@ export default function HomeList(props) {
         }
         fetchList()
 
-    }, [renderCount])
+    }, [renderCount, searchValue, searchType])
 
     return (
         <div className='main-list'>

@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const homeSlice = createSlice({
     name: 'homePageFeatures',
-    //2 states: View, Add, Update
     initialState: {
         currentProduct: {
             id: '-1',
@@ -42,8 +41,12 @@ export const homeSlice = createSlice({
         changeSearchValue: (state, action) => {
             state.searchValue = action.payload
         },
-        chnageSearchType: (state, action) => {
-            state.searchType = action.payload
+        changeSearchType: (state, action) => {
+            if (action.payload === "All") {
+                state.searchType = ""
+            } else {
+                state.searchType = action.payload
+            }
         },
     }
 })

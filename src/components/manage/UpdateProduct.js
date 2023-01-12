@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { productSlice } from '../manage/productSlices'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import SendIcon from '@mui/icons-material/Send';
-import { Button, FormControlLabel, Switch, TextField, Typography } from '@mui/material';
+import { Button, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -44,7 +44,6 @@ export default function UpdateProduct() {
         },
         validationSchema: Yup.object({
             name: Yup.string().required("Name is required.").min(2, "Must be 2 characters or more"),
-            type: Yup.string().required("Type is required."),
             quantity: Yup.number().integer().required("Quantity is required.").typeError("Please enter a valid number").max(300, "No more than 300").min(0, "Must be a positive number"),
             price: Yup.number().integer().required("Price is required.").typeError("Please enter a valid number").min(1000, "Most food products are more than 1000 VND"),
         }),
@@ -68,18 +67,25 @@ export default function UpdateProduct() {
                     name="name"
                     value={formik.values.name}
                     onChange={formik.handleChange}
-                    style={{ marginTop: '20px' }}
+                    style={{ marginTop: '20px', marginBottom: '20px' }}
                 />
                 {formik.errors.name && (<Typography variant="caption" color="red">{formik.errors.name}</Typography>)}
-                <TextField
-                    fullWidth
-                    label="Type"
-                    name="type"
-                    value={formik.values.type}
-                    onChange={formik.handleChange}
-                    style={{ marginTop: '20px' }}
-                />
-                {formik.errors.type && (<Typography variant="caption" color="red">{formik.errors.type}</Typography>)}
+                <FormControl>
+                    <InputLabel>Type</InputLabel>
+                    <Select
+                        label="Type"
+                        name="type"
+                        value={formik.values.type}
+                        onChange={formik.handleChange}
+                        autoWidth
+                        style={{ width: 200 }}
+                    >
+                        <MenuItem value="Fruit">Fruit</MenuItem>
+                        <MenuItem value="Snack">Snack</MenuItem>
+                        <MenuItem value="Milk">Milk</MenuItem>
+                        <MenuItem value="Vegetables">Vegetables</MenuItem>
+                    </Select>
+                </FormControl>
                 <TextField
                     fullWidth
                     label="Quantity"
@@ -99,7 +105,7 @@ export default function UpdateProduct() {
                 />
                 {formik.errors.price && (<Typography variant="caption" color="red">{formik.errors.price}</Typography>)}
                 <div>
-                    <FormControlLabel control={<Switch checked={formik.values.sale}/>}
+                    <FormControlLabel control={<Switch checked={formik.values.sale} />}
                         label="Sale" name='sale' onClick={formik.handleChange} />
                 </div>
                 <div>
