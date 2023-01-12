@@ -31,9 +31,9 @@ export default function AddProduct() {
     const formik = useFormik({
         initialValues: {
             name: '',
-            type: '',
+            type: 'Fruit',
             quantity: 0,
-            price: 0,
+            price: 1000,
             sale: true,
             image: '',
         },
