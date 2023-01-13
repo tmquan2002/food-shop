@@ -52,7 +52,12 @@
     margin: 2%;
 }
 
-.main-home-detail-container {
+.main-home-detail-container, .main-cart-container {
     width: 70%;
-    margin: 7rem auto 1rem auto;
+    margin: 6rem auto 1rem auto;
+}
+
+.checkout {
+    width: 70%;
+    margin: 0 auto;
 }

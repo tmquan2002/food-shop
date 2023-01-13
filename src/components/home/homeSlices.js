@@ -21,7 +21,7 @@ export const homeSlice = createSlice({
             let old = false;
             for (let i = 0; i < state.cart.length; i++) {
                 if (state.cart[i].id === action.payload.id) {
-                    state.cart[i].quantity = state.cart[i].quantity + 1
+                    state.cart[i].quantity = Number(state.cart[i].quantity) + 1
                     old = true
                 }
             }
@@ -30,7 +30,7 @@ export const homeSlice = createSlice({
             }
         },
         removeFromCart: (state, action) => {
-            state.cart = state.value.filter((item) => item.id !== action.payload.id);
+            state.cart = state.cart.filter((item) => item.id !== action.payload.id);
         },
         changeQuantity: (state, action) => {
             for (let i = 0; i < state.cart.length; i++) {

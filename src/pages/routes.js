@@ -1,7 +1,7 @@
 import HomeMainPage from "./Home";
-import Checkout from "./Checkout";
+import Orders from "./Order";
 import Manage from "./Manage";
 import GoogleLogin from "./Login";
 import CartPage from "./Cart";
 
-export { HomeMainPage, GoogleLogin, Checkout, Manage, CartPage }
+export { HomeMainPage, GoogleLogin, Orders, Manage, CartPage }
