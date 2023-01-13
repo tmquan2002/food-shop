@@ -32,10 +32,13 @@ export const homeSlice = createSlice({
         removeFromCart: (state, action) => {
             state.cart = state.cart.filter((item) => item.id !== action.payload.id);
         },
+        emptyCart: (state) => {
+            state.cart = []
+        },
         changeQuantity: (state, action) => {
             for (let i = 0; i < state.cart.length; i++) {
                 if (state.cart[i].id === action.payload.id) {
-                    state.cart[i].quantity = action.payload.quantity
+                    state.cart[i].quantity = Number(action.payload.quantity)
                 }
             }
         },

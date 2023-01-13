@@ -4,6 +4,7 @@ export const userSlice = createSlice({
     name: 'loggedInUser',
     initialState: {
         user: {
+            id: '',
             name: '',
             avatar: '',
             email: '',
@@ -21,6 +22,7 @@ export const userSlice = createSlice({
         // }
         logoutUser: (state) => {
             state.user = {
+                id: '',
                 name: '',
                 avatar: '',
                 email: '',
@@ -53,7 +55,8 @@ export const checkUserAsync = createAsyncThunk('checkLoginUser', async (data) =>
             // console.log(e)
             addRole = {
                 ...data,
-                role: e.role
+                role: e.role,
+                id: e.id
             }
         }
     });

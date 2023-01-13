@@ -18,10 +18,10 @@ export default function UpdateProduct() {
             body: JSON.stringify({
                 name: data.name,
                 type: data.type,
-                quantity: data.quantity,
+                quantity: Number(data.quantity),
                 price: data.price,
                 sale: data.sale,
-                img: '',
+                image: product.image,
             })
         })
             .then((res) => res.json())
