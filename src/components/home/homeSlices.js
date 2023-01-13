@@ -14,7 +14,7 @@ export const homeSlice = createSlice({
         },
         searchValue: "",
         searchType: "",
-        cart: []
+        cart: [],
     },
     reducers: {
         addToCart: (state, action) => {

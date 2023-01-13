@@ -9,6 +9,7 @@ export default function CartPage() {
 
     const [openSnack, setOpenSnack] = useState(false)
     const [openDialog, setOpenDialog] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [dialogMess, setDialogMess] = useState("")
     const user = useSelector((state) => state.loginUser.user)
     const cart = useSelector((state) => state.manageHome.cart)
@@ -30,6 +31,22 @@ export default function CartPage() {
                 userId: user.id,
                 productIds: productIds,
                 productQuantities: productQuantities,
+                total: totalPrice.toString()
+            })
+        })
+            .then((res) => res.json())
+            .catch((error) => { console.log(error) })
+        // console.log(response)
+    }
+
+    async function updateQuantity(data) {
+        await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product/${data.id}`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }, method: 'PUT',
+            body: JSON.stringify({
+                quantity: Number(data.quantity),
             })
         })
             .then((res) => res.json())
@@ -38,6 +55,7 @@ export default function CartPage() {
     }
 
     const handleCheckout = () => {
+        setLoading(true)
         if (!user.login) {
             //Check login
             setDialogMess("Please login first to finish checkout!")
@@ -63,14 +81,22 @@ export default function CartPage() {
                     setDialogMess("There's not enough " + quantityError.join(', ') + " in store. Please edit the quantity or remove the product, you can check the amount left in our store by viewing the detail")
                     setOpenDialog(true)
                 } else {
-                    //Empty cart and add the order to mockapi
-                    checkout().then(() => dispatch(homeSlice.actions.emptyCart()))
+                    //Empty cart, add the order to mockapi and update quantity in store
+                    checkout()
+                    cart.forEach(item => {
+                        let storeQuantity = (response.find(obj => obj.id === item.id)).quantity;
+                        let data = {
+                            id: item.id,
+                            quantity: storeQuantity - item.quantity
+                        }
+                        updateQuantity(data)
+                    })
+                    dispatch(homeSlice.actions.emptyCart())
                     setOpenSnack(true)
                 }
             }
             fetchList()
         }
-        //checkout()
     }
 
     return (
@@ -84,22 +110,40 @@ export default function CartPage() {
                 <div className="checkout" style={{ position: 'relative', height: 'auto' }}>
                     <div style={{ position: 'absolute', top: '1rem', right: '1rem' }}>
                         <div style={{ fontSize: '30px', color: '#d32f2f', fontWeight: '600' }}>Total: {totalPrice} VND</div>
-                        <Button fullWidth size="large" variant="contained" onClick={handleCheckout}>CHECKOUT</Button>
+                        {!loading ?
+                            <Button fullWidth size="large" variant="contained" onClick={handleCheckout}>CHECKOUT</Button>
+                            :
+                            <Button fullWidth size="large" variant="contained" disabled>CHECKOUT</Button>
+                        }
                     </div>
                 </div>
             }
-            <Snackbar open={openSnack} autoHideDuration={3000} onClose={() => setOpenSnack(false)}>
-                <Alert onClose={() => setOpenSnack(false)} severity="success" sx={{ width: '100%' }}>
+            <Snackbar open={openSnack} autoHideDuration={3000} onClose={() => {
+                setOpenSnack(false)
+                setLoading(false)
+            }}>
+                <Alert onClose={() => {
+                    setOpenSnack(false)
+                    setLoading(false)
+                }}
+                    severity="success" sx={{ width: '100%' }}>
                     Checkout successful!
                 </Alert>
             </Snackbar>
 
-            <Dialog onClose={() => setOpenDialog(false)} open={openDialog}>
+            <Dialog onClose={() => {
+                setOpenDialog(false)
+                setLoading(false)
+            }}
+                open={openDialog}>
                 <DialogTitle>
                     {dialogMess}
                 </DialogTitle>
                 <DialogActions>
-                    <Button onClick={() => setOpenDialog(false)}>OK</Button>
+                    <Button onClick={() => {
+                        setOpenDialog(false)
+                        setLoading(false)
+                    }}>OK</Button>
                 </DialogActions>
             </Dialog>
         </>

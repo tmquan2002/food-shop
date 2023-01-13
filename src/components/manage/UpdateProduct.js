@@ -81,6 +81,7 @@ export default function UpdateProduct() {
                         style={{ width: 200 }}
                     >
                         <MenuItem value="Fruit">Fruit</MenuItem>
+                        <MenuItem value="Rice">Rice</MenuItem>
                         <MenuItem value="Snack">Snack</MenuItem>
                         <MenuItem value="Milk">Milk</MenuItem>
                         <MenuItem value="Vegetables">Vegetables</MenuItem>

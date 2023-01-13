@@ -39,10 +39,13 @@ export default function Detail() {
                 <div style={{ marginLeft: '10%', width: '30%' }}>
                     <div style={{ fontSize: '50px' }}>{product.name}</div>
                     <div>Type: {product.type}</div>
+                    {product.quantity !== 0 ?
+                        <h4>Amount: {product.quantity}</h4> : <></>
+                    }
                     <Divider />
                     <br />
                     <div style={{ fontSize: '30px', color: '#d32f2f', fontWeight: '600', marginBottom: '5rem' }}>{product.price} VND</div>
-                    {product.quantity === '0' ?
+                    {product.quantity === 0 ?
                         <Button disabled variant='contained' fullWidth>Sold out</Button>
                         :
                         <Button variant='contained' fullWidth onClick={() => handleBuy(product)}>Add to Cart</Button>

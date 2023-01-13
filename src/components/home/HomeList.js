@@ -90,7 +90,7 @@ export default function HomeList(props) {
                                 </CardContent>
                                 <CardActions>
                                     <Button size="small" color='inherit' onClick={() => handleDetail(v)}><strong>More Detail</strong></Button>
-                                    {v.quantity === '0' ? <Button disabled size="small"><strong>Sold Out</strong></Button>
+                                    {v.quantity === 0 ? <Button disabled size="small"><strong>Sold Out</strong></Button>
                                         : <Button size="small" color='secondary' onClick={() => handleBuy(v)}><strong>Buy</strong></Button>}
                                 </CardActions>
                             </Card>

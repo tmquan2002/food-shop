@@ -33,6 +33,7 @@ export default function HomeSearchBar() {
                 >
                     <MenuItem value="All">All</MenuItem>
                     <MenuItem value="Fruit">Fruit</MenuItem>
+                    <MenuItem value="Rice">Rice</MenuItem>
                     <MenuItem value="Snack">Snack</MenuItem>
                     <MenuItem value="Milk">Milk</MenuItem>
                     <MenuItem value="Vegetables">Vegetables</MenuItem>

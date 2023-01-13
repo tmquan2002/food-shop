@@ -1,19 +1,19 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { Button, IconButton, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { productSlice } from '../manage/productSlices'
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function ProductList() {
-    const product = useSelector((state) => state.manageProduct.currentProduct)
+    // const product = useSelector((state) => state.manageProduct.currentProduct)
     const dispatch = useDispatch()
     const [data, setData] = useState([])
     const [render, setRender] = useState(false)
     const [renderCounter, setRenderCounter] = useState(0)
     const [search, setSearch] = useState("")
-    const [openAlert, setOpenAlert] = useState(false)
+    // const [openAlert, setOpenAlert] = useState(false)
     const skeleton = [1, 2, 3, 4, 5]
 
     const handleSearch = (e) => {
@@ -24,15 +24,15 @@ export default function ProductList() {
         }
     }
 
-    async function deleteProduct() {
-        await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product/${product.id}`, { method: 'DELETE' })
-            .then((res) => res.json())
-            .catch((error) => { console.log(error) })
-        dispatch(productSlice.actions.setMessageNotification("Delete successful!"))
-        setOpenAlert(false)
-        setRenderCounter(s => s + 1)
-        setRender(false)
-    }
+    // async function deleteProduct() {
+    //     await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product/${product.id}`, { method: 'DELETE' })
+    //         .then((res) => res.json())
+    //         .catch((error) => { console.log(error) })
+    //     dispatch(productSlice.actions.setMessageNotification("Delete successful!"))
+    //     setOpenAlert(false)
+    //     setRenderCounter(s => s + 1)
+    //     setRender(false)
+    // }
 
     useEffect(() => {
         async function fetchList() {
@@ -98,14 +98,14 @@ export default function ProductList() {
                                             >
                                                 <EditIcon />
                                             </IconButton>
-                                            <IconButton aria-label="update" color="error"
+                                            {/* <IconButton aria-label="delete" color="error"
                                                 onClick={() => {
                                                     setOpenAlert(true)
                                                     dispatch(productSlice.actions.updateCurrentProduct(info))
                                                 }}
                                             >
                                                 <DeleteIcon />
-                                            </IconButton>
+                                            </IconButton> */}
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -150,7 +150,7 @@ export default function ProductList() {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Dialog
+            {/* <Dialog
                 open={openAlert}
                 onClose={() => setOpenAlert(false)}
             >
@@ -168,7 +168,7 @@ export default function ProductList() {
                         Delete
                     </Button>
                 </DialogActions>
-            </Dialog>
+            </Dialog> */}
         </>
     )
 }

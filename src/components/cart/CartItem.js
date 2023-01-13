@@ -28,19 +28,19 @@ export default function CartItem(props) {
 
     return (
         <>
-            <Grid xs={1} md={1} lg={1}>
+            <Grid item xs={1} md={1} lg={1}>
                 <img alt={props.product.name} src={props.product.image} width={100} height={100} />
             </Grid>
-            <Grid xs={6} md={8} lg={8}>
+            <Grid item xs={6} md={8} lg={8}>
                 <div style={{fontWeight: 600, fontSize: '25px'}}>{props.product.name}</div>
                 <div style={{fontWeight: 200, color: 'red'}}>{props.product.price} VND</div>
             </Grid>
-            <Grid xs={2} md={1} lg={2} style={{ textAlign: 'right' }}>
+            <Grid item xs={2} md={1} lg={2} style={{ textAlign: 'right' }}>
                 <TextField type="number" name="quantity" label="Quantity" value={quantity} onChange={handleChange} size="small" onBlur={handleBlur} sx={{ width: 80 }} />
                 <div style={{fontWeight: 600}}>{Number(props.product.price) * Number(props.product.quantity)} VND</div>
                 <Button onClick={() => setOpenAlert(true)}>remove</Button>
             </Grid>
-            <Grid xs={12} md={12}>
+            <Grid item xs={12} md={12}>
                 <Divider sx={{margin: '1rem'}}/>
             </Grid>
             <Dialog
