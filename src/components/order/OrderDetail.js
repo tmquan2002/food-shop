@@ -1,5 +1,5 @@
 import { Grid } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import OrderItem from "./OrderItem";
 
 export default function OrderDetail(props) {
@@ -18,7 +18,7 @@ export default function OrderDetail(props) {
                 .catch((error) => { console.log(error) })
             const list = response
             const filterList = list.filter(function (item) {
-                return productIds.indexOf(item.id) != -1;
+                return productIds.indexOf(item.id) !== -1;
             });
             for (let i = 0; i < filterList.length; i++) {
                 filterList[i].quantity = productQuantities[i]
@@ -27,7 +27,7 @@ export default function OrderDetail(props) {
             setRender(true)
         }
         fetchList()
-    }, [])
+    }, [productIds, productQuantities])
 
     return (
         <>

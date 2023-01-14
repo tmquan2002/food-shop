@@ -2,12 +2,26 @@ import { useDispatch } from 'react-redux';
 import { productSlice } from '../manage/productSlices'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import SendIcon from '@mui/icons-material/Send';
-import { Button, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField, Typography } from '@mui/material';
+import { Button, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Stack, Switch, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useState } from 'react';
 
 export default function AddProduct() {
     const dispatch = useDispatch()
+    const [file, setFile] = useState(null);
+    const [imageUrl, setImageUrl] = useState('')
+    const [loading, setLoading] = useState(false)
+
+    const handleChange = e => {
+        var files = e.target.files;
+        var filesArray = [].slice.call(files);
+        // console.log(filesArray)
+        setFile(filesArray[0])
+        setLoading(true)
+        uploadImage(filesArray[0])
+    };
+
     async function fetchAdd(data) {
         await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product`, {
             headers: {
@@ -20,13 +34,26 @@ export default function AddProduct() {
                 quantity: Number(data.quantity),
                 price: data.price,
                 sale: data.sale,
-                image: '',
+                image: imageUrl,
             })
         })
             .then((res) => res.json())
             .catch((error) => { console.log(error) })
         // console.log(response)
     }
+
+    const uploadImage = async (file) => {
+        const formData = new FormData();
+        formData.append('file', file)
+        formData.append('upload_preset', `blooddonorpreset`);
+        const data = await fetch(`https://api.cloudinary.com/v1_1/tmquan/image/upload`, {
+            method: 'POST',
+            body: formData
+        }).then(r => r.json());
+        setImageUrl(data.url)
+        // setCurrPublicId(data.public_id)
+        setLoading(false)
+    };
 
     const formik = useFormik({
         initialValues: {
@@ -108,7 +135,27 @@ export default function AddProduct() {
                     <FormControlLabel control={<Switch />} label="Sale" name='sale'
                         value={formik.values.sale} onClick={formik.handleChange} />
                 </div>
-                <div>
+                <Stack direction="row" alignItems="center" spacing={2}>
+                    {!loading ?
+                        <>
+                            <Button variant="contained" component="label">
+                                Upload
+                                <input
+                                    hidden
+                                    accept="image/*"
+                                    type="file"
+                                    onChange={e => handleChange(e)}
+                                />
+                            </Button>
+                            <div>{file !== null ? <>{file.name}</> : <></>}</div>
+                        </>
+                        :
+                        <Button variant="contained" disabled component="label">
+                            Load Image
+                        </Button>
+                    }
+                </Stack>
+                <div style={{ marginTop: '1rem' }}>
                     <Button
                         type='submit'
                         variant="contained"
