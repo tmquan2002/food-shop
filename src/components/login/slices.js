@@ -43,27 +43,6 @@ export const userSlice = createSlice({
     }
 })
 
-// export const checkUserAsync = createAsyncThunk('checkLoginUser', async (data) => {
-//     const response = await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/User`)
-//         .then((res) => res.json())
-//         .catch((error) => { console.log(error) })
-//     // console.log(data)
-//     // console.log(response)
-//     let addRole = data;
-//     response.forEach(e => {
-//         if (e.email === data.email) {
-//             // console.log(e)
-//             addRole = {
-//                 ...data,
-//                 role: e.role,
-//                 id: e.id
-//             }
-//         }
-//     });
-//     // console.log(addRole)
-//     return addRole
-// })
-
 export const checkUserAsync = createAsyncThunk('checkLoginUser', async (data) => {
     let currentUser = data;
     //Get the list of all user (Who has logged in to the app before)

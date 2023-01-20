@@ -93,10 +93,11 @@ export default function AddProduct() {
                     name="name"
                     value={formik.values.name}
                     onChange={formik.handleChange}
-                    style={{ marginTop: '20px', marginBottom: '20px' }}
+                    style={{ marginTop: '20px' }}
                 />
-                {formik.errors.name && (<Typography variant="caption" color="red">{formik.errors.name}</Typography>)}
-                <FormControl>
+                {formik.errors.name && (<Typography variant="caption" color="red" style={{ marginBottom: '2' }}>{formik.errors.name}</Typography>)}
+                <br/>
+                <FormControl style={{ marginTop: '20px' }}>
                     <InputLabel>Type</InputLabel>
                     <Select
                         label="Type"
@@ -151,7 +152,7 @@ export default function AddProduct() {
                         </>
                         :
                         <Button variant="contained" disabled component="label">
-                            Load Image
+                            Loading...
                         </Button>
                     }
                 </Stack>
