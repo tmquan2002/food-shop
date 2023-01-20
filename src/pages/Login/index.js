@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 import { Typography } from '@mui/material';
-import { checkUserAsync, addNewUser } from '../../components/login/slices'
+import { checkUserAsync } from '../../components/login/slices'
 import { useDispatch, useSelector } from 'react-redux';
 
 export default function GoogleLogin() {
@@ -25,7 +25,6 @@ export default function GoogleLogin() {
                 login: true
             }
             dispatch(checkUserAsync(user))
-            addNewUser(user)
             navigate("/")
         }
         google.accounts.id.initialize({
