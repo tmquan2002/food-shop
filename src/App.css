@@ -37,7 +37,7 @@
 }
 
 .main-list {
-    width: 50%;
+    width: 60%;
     margin: 1rem auto;
     text-align: center;
 }
@@ -49,7 +49,7 @@
 }
 
 .card-data {
-    margin: 2%;
+    margin: 1%;
 }
 
 .main-home-detail-container, .main-cart-container {

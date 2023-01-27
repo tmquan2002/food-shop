@@ -5,7 +5,6 @@ export default function UserList() {
     const [data, setData] = useState([])
     const [render, setRender] = useState(false)
     const [search, setSearch] = useState("")
-    const skeleton = [1, 2, 3, 4]
 
     const handleSearch = (e) => {
         if (e.key === "Enter") {
@@ -37,7 +36,7 @@ export default function UserList() {
                 <Table stickyHeader>
                     <TableHead>
                         <TableRow>
-                            <TableCell><strong>#</strong></TableCell>
+                            <TableCell><strong>ID</strong></TableCell>
                             <TableCell><strong>Name</strong></TableCell>
                             <TableCell><strong>Email</strong></TableCell>
                             <TableCell align="right"><strong>Role</strong></TableCell>
@@ -68,20 +67,16 @@ export default function UserList() {
                             </>
                             :
                             <>
-                                {skeleton.map((info) => (
+                                {[...Array(5).keys()].map((key) => (
                                     <TableRow
-                                        key={info}
+                                        key={key}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell component="th" scope="row">
-                                            <Skeleton variant="rounded" width={20} height={15} />
-                                        </TableCell>
-                                        <TableCell component="th" scope="row">
-                                            <Skeleton variant="rounded" width={50} height={15} />
-                                        </TableCell>
-                                        <TableCell component="th" scope="row">
-                                            <Skeleton variant="rounded" width={50} height={15} />
-                                        </TableCell>
+                                        {[...Array(3).keys()].map((subKey) => (
+                                            <TableCell component="th" scope="row" key={subKey}>
+                                                <Skeleton variant="rounded" width={50} height={15} />
+                                            </TableCell>
+                                        ))}
                                         <TableCell align="right">
                                             <Skeleton variant="rounded" height={15} align="right" />
                                         </TableCell>

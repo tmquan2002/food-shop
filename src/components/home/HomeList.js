@@ -9,7 +9,7 @@ import { notiAndSwitchPageSlices } from './notiAndSwitchPageSlices';
 
 export default function HomeList(props) {
 
-    const itemsPerPage = 6
+    const itemsPerPage = 4
     const [splitData, setSplitData] = useState([[]])
     const [totalPages, setTotalPages] = useState(1)
     const [page, setPage] = useState(1);
@@ -73,12 +73,13 @@ export default function HomeList(props) {
                 <div className="data-list-container">
                     {splitData[page - 1].map((v) => (
                         <div className="card-data" key={v.id}>
-                            <Card sx={{ width: 200, maxHeight: 300 }}>
+                            <Card sx={{ width: 200, height: 300 }}>
                                 <CardMedia
                                     component="img"
                                     alt={v.name}
                                     height="140"
                                     image={v.image}
+                                    sx={{ objectFit: "contain" }}
                                 />
                                 <CardContent>
                                     <Typography gutterBottom component="div">
@@ -91,7 +92,7 @@ export default function HomeList(props) {
                                 <CardActions>
                                     <Button size="small" color='inherit' onClick={() => handleDetail(v)}><strong>More Detail</strong></Button>
                                     {v.quantity === 0 ? <Button disabled size="small"><strong>Sold Out</strong></Button>
-                                        : <Button size="small" color='secondary' onClick={() => handleBuy(v)}><strong>Buy</strong></Button>}
+                                        : <Button size="small" color='secondary' onClick={() => handleBuy(v)}><strong>ADD TO CART</strong></Button>}
                                 </CardActions>
                             </Card>
                         </div>
@@ -101,10 +102,16 @@ export default function HomeList(props) {
                     <Pagination color='primary' count={totalPages} page={page} onChange={(e, value) => setPage(value)} />
                 </div>
             </Stack> :
-                <div className='main-list'>
-                    <Skeleton variant="rounded" width={500} height={300} />
+                <div className='data-list-container'>
+                    {[...Array(4).keys()].map((item) => (
+                        <div className="card-data" key={item}>
+                            <Card sx={{ width: 200, height: 300 }}>
+                                <Skeleton variant="rounded" width={500} height={300} />
+                            </Card>
+                        </div>
+                    ))}
                 </div>
-            }            
+            }
         </div>
     );
 }

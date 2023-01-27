@@ -33,7 +33,6 @@ export const productSlice = createSlice({
             state.currentProduct = action.payload
         },
         setMessageNotification: (state, action) => {
-            state.feature = 'view'
             state.notification.message = action.payload
             state.notification.open = true
         },

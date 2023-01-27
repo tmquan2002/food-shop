@@ -31,13 +31,15 @@ export default function Detail() {
             </div>
             <div style={{ display: 'flex', marginBottom: '1rem' }}>
                 <img
-                    width={'50%'}
+                    width={'40%'}
+                    height={400}
                     src={product.image}
                     alt={product.name}
+                    style={{ objectFit: 'contain' }}
                     loading="lazy"
                 />
                 <div style={{ marginLeft: '10%', width: '30%' }}>
-                    <div style={{ fontSize: '50px' }}>{product.name}</div>
+                    <div style={{ fontSize: '40px' }}>{product.name}</div>
                     <div>Type: {product.type}</div>
                     {product.quantity !== 0 ?
                         <h4>Amount: {product.quantity}</h4> : <></>

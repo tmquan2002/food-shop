@@ -148,7 +148,13 @@ export default function UpdateProduct() {
                                     onChange={e => handleChange(e)}
                                 />
                             </Button>
-                            <div>{file !== null ? <>{file.name}</> : <></>}</div>
+                            <div>
+                                <img
+                                    src={(file !== null) ? URL.createObjectURL(file) : imageUrl}
+                                    style={{ width: 300 }}
+                                    alt="preview"
+                                />
+                            </div>
                         </>
                         :
                         <Button variant="contained" disabled component="label">

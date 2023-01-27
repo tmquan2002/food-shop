@@ -14,7 +14,6 @@ export default function ProductList() {
     const [renderCounter, setRenderCounter] = useState(0)
     const [search, setSearch] = useState("")
     // const [openAlert, setOpenAlert] = useState(false)
-    const skeleton = [1, 2, 3, 4, 5]
 
     const handleSearch = (e) => {
         if (e.key === "Enter") {
@@ -112,35 +111,22 @@ export default function ProductList() {
                             </>
                             :
                             <>
-                                {skeleton.map((info) => (
+                                {[...Array(5).keys()].map((key) => (
                                     <TableRow
-                                        key={info}
+                                        key={key}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell component="th" scope="row">
                                             <Skeleton variant="rounded" width={20} height={15} />
                                         </TableCell>
-                                        <TableCell component="th" scope="row">
-                                            <Skeleton variant="rounded" width={50} height={15} />
-                                        </TableCell>
-                                        <TableCell component="th" scope="row">
-                                            <Skeleton variant="rounded" width={50} height={15} />
-                                        </TableCell>
-                                        <TableCell component="th" scope="row">
-                                            <Skeleton variant="rounded" width={50} height={15} />
-                                        </TableCell>
-                                        <TableCell component="th" scope="row">
-                                            <Skeleton variant="rounded" width={50} height={15} />
-                                        </TableCell>
-                                        <TableCell component="th" scope="row">
-                                            <Skeleton variant="rounded" width={50} height={15} />
-                                        </TableCell>
+                                        {[...Array(5).keys()].map((subKey) => (
+                                            <TableCell component="th" scope="row" key={subKey}>
+                                                <Skeleton variant="rounded" width={50} height={15} />
+                                            </TableCell>
+                                        ))}
                                         <TableCell align="right">
                                             <IconButton aria-label="update" color="primary">
                                                 <EditIcon />
-                                            </IconButton>
-                                            <IconButton aria-label="update" color="error">
-                                                <DeleteIcon />
                                             </IconButton>
                                         </TableCell>
                                     </TableRow>
