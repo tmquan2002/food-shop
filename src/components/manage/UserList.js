@@ -19,7 +19,7 @@ export default function UserList() {
                 .then((res) => res.json())
                 .catch((error) => { console.log(error) })
             const list = response
-            console.log(response)
+            // console.log(response)
             setData(list.filter(e => e.name.toLowerCase().includes(search.toLowerCase())))
             setRender(true)
         }

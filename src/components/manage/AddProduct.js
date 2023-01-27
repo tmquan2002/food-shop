@@ -2,7 +2,7 @@ import { useDispatch } from 'react-redux';
 import { productSlice } from '../manage/productSlices'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import SendIcon from '@mui/icons-material/Send';
-import { Button, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField, Typography } from '@mui/material';
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
@@ -14,6 +14,7 @@ export default function AddProduct() {
     const [publicId, setPublicId] = useState('')
     const [imageError, setImageError] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [openAlert, setOpenAlert] = useState(false)
 
     const handleChange = e => {
         var files = e.target.files;
@@ -25,11 +26,6 @@ export default function AddProduct() {
             } else {
                 setImageError(false)
                 setFile(filesArray[0])
-                setLoading(true)
-                uploadImage(filesArray[0])
-                if (publicId !== '') {
-                    removeImage(publicId)
-                }
             }
         }
     };
@@ -46,7 +42,7 @@ export default function AddProduct() {
                 quantity: Number(data.quantity),
                 price: data.price,
                 sale: data.sale,
-                image: imageUrl,
+                image: imageUrl === undefined ? 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg' : imageUrl,
             })
         })
             .then((res) => res.json())
@@ -66,7 +62,7 @@ export default function AddProduct() {
         setImageUrl(data.url)
         setPublicId(data.public_id)
         setLoading(false)
-    };
+    }
 
     const removeImage = async (public_Id) => {
         // console.log(public_Id)
@@ -86,6 +82,17 @@ export default function AddProduct() {
         }).then(r => r.json());
     }
 
+    const confirmAdd = () => {
+        setOpenAlert(true)
+        setLoading(true)
+        uploadImage(file)
+    }
+
+    const cancelAdd = () => {
+        removeImage(publicId)
+        setOpenAlert(false)
+    }
+
     const formik = useFormik({
         initialValues: {
             name: '',
@@ -97,6 +104,7 @@ export default function AddProduct() {
         onSubmit: (values, { resetForm }) => {
             fetchAdd(values)
             dispatch(productSlice.actions.setMessageNotification('New product added!'))
+            setOpenAlert(false)
             resetForm()
         },
         validationSchema: Yup.object({
@@ -116,8 +124,7 @@ export default function AddProduct() {
                 }}><ArrowBackIosIcon />Back to list view</Button>
             </div>
             <h1>ADD NEW PRODUCTS</h1>
-            <form onSubmit={formik.handleSubmit}>
-
+            <form id='productForm' onSubmit={formik.handleSubmit}>
                 <TextField
                     fullWidth
                     label="Name"
@@ -167,49 +174,70 @@ export default function AddProduct() {
                     <FormControlLabel control={<Switch />} label="Sale" name='sale'
                         value={formik.values.sale} onClick={formik.handleChange} />
                 </div>
-                <div>
-                    {!loading ?
-                        <div style={{ textAlign: 'center', height: '100%', padding: '3%', borderStyle: 'dashed', borderColor: '#FFC5B3' }}>
-                            {file !== null ?
-                                <>
-                                    {imageError ?
-                                        <Typography color='red'>File too large! Please upload image under 10MB</Typography>
-                                        :
-                                        <img
-                                            src={URL.createObjectURL(file)}
-                                            style={{ width: '100%', height: 300, objectFit: 'contain' }}
-                                            alt="preview"
-                                        />
-                                    }
-                                </>
-                                :
-                                <Typography>Click Browse.. to upload image. Try to keep the image with 1:1 ratio</Typography>
-                            }
-                            <Button variant="contained" component="label">
-                                Browse...
-                                <input
-                                    hidden
-                                    accept="image/*"
-                                    type="file"
-                                    onChange={e => handleChange(e)}
-                                />
-                            </Button>
-                        </div>
+                <div style={{ textAlign: 'center', height: '100%', padding: '3%', borderStyle: 'dashed', borderColor: '#FFC5B3' }}>
+                    {imageError ?
+                        <Typography color='red'>File too large! Please upload image under 10MB</Typography>
                         :
-                        <Button variant="contained" disabled component="label">
-                            Loading...
-                        </Button>
+                        <>
+                            {file !== null ?
+                                <img
+                                    src={URL.createObjectURL(file)}
+                                    style={{ width: '100%', height: 300, objectFit: 'contain' }}
+                                    alt="preview"
+                                />
+                                :
+                                <Typography>Click Browse.. to upload image. Keep the image in 1:1 ratio for better display</Typography>
+                            }
+                        </>
                     }
+                    <Button variant="contained" component="label">
+                        Browse...
+                        <input
+                            hidden
+                            accept="image/*"
+                            type="file"
+                            onChange={e => handleChange(e)}
+                        />
+                    </Button>
                 </div>
                 <div style={{ marginTop: '1rem' }}>
-                    <Button
-                        type='submit'
-                        variant="contained"
-                        endIcon={<SendIcon />}
-                    >
+                    <Button variant="contained" endIcon={<SendIcon />}
+                        onClick={confirmAdd}>
                         Add
                     </Button>
                 </div>
+                <Dialog
+                    open={openAlert}
+                    onClose={cancelAdd}
+                >
+                    <DialogTitle>
+                        Add this product?
+                    </DialogTitle>
+                    {loading ?
+                        <DialogContent>
+                            <DialogContentText>
+                                Please wait for a bit, the image is being loaded to the server
+                            </DialogContentText>
+                        </DialogContent> :
+                        <></>
+                    }
+
+                    {!loading ?
+                        <DialogActions>
+                            <Button onClick={cancelAdd}>Cancel</Button>
+                            <Button color='error' type='submit' form='productForm'>
+                                Add
+                            </Button>
+
+                        </DialogActions>
+                        :
+                        <DialogActions>
+                            <Button color='error' disabled>
+                                <CircularProgress />
+                            </Button>
+                        </DialogActions>
+                    }
+                </Dialog>
             </form>
         </>
     )
