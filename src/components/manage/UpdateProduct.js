@@ -10,11 +10,13 @@ import { useState } from 'react';
 export default function UpdateProduct() {
     const product = useSelector((state) => state.manageProduct.currentProduct)
     const dispatch = useDispatch()
-    const [file, setFile] = useState(null);
+    //File used to preview image before used to upload to Cloudinary
+    //If file is null (user didn't browse any picture for the first time), no cloudinary action needed
+    const [file, setFile] = useState(null)
     const [imageUrl, setImageUrl] = useState(product.image === 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg' ? null : product.image)
-    //In cloudinary, old public_Id is the last string of the imageURL
-    //Method: split imageURL with "/" and get the last item in the array
-    const [oldPublicId, setOldPublicId] = useState(product.image.split('/')[product.image.split('/').length - 1])
+    //In cloudinary, public_Id is the last string of the imageURL (split by "/")
+    //Split imageURL with "/" and ".", then get the 2nd last item of splitted array (remove the extension like .svg .png .jpg)
+    const oldPublicId = product.image.split(/[/.]/)[product.image.split(/[/.]/).length - 2]
     const [publicId, setPublicId] = useState('') //Cloudinary public_Id, get when upload to cloudinary media, used for cancel if remove  
     const [imageError, setImageError] = useState(false) //Used went the upload size is bigger than 10MB
     const [loading, setLoading] = useState(false) //Loading the dialog/popup when image is being loaded to cloudinary
@@ -102,7 +104,9 @@ export default function UpdateProduct() {
 
     //Cancel action button
     const cancelUpdate = () => {
-        removeImage(publicId)
+        if (file !== null) {
+            removeImage(publicId)
+        }
         setOpenAlert(false)
     }
 
