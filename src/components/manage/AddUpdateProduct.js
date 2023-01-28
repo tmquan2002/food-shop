@@ -7,20 +7,39 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
 
-export default function UpdateProduct() {
+export default function AddUpdateProduct() {
+    //Get current product for Update
     const product = useSelector((state) => state.manageProduct.currentProduct)
+
+    //Get current feature (Add or Update)
+    const feature = useSelector((state) => state.manageProduct.feature)
     const dispatch = useDispatch()
+
     //File used to preview image before used to upload to Cloudinary
     //If file is null (user didn't browse any picture for the first time), no cloudinary action needed
     const [file, setFile] = useState(null)
-    const [imageUrl, setImageUrl] = useState(product.image === 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg' ? null : product.image)
-    //In cloudinary, public_Id is the last string of the imageURL (split by "/")
-    //Split imageURL with "/" and ".", then get the 2nd last item of splitted array (remove the extension like .svg .png .jpg)
+
+    //For Add, no image selected so it should be null
+    //For Update, null when no image available other than that get current url
+    //No Image selected or
+    const [imageUrl, setImageUrl] = useState(product.image === 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg' ? '' : product.image)
+
+    //Cloudinary public_Id is the image ID, used for remove image in cloudinary media library
+    const [publicId, setPublicId] = useState('')
+
+    //For Update feature
+    //In Cloudinary, public_Id is also contains in the last string of the imageURL with extension like .svg .png .jpg (split by "/")
+    //Split imageURL with "/" and ".", then get the 2nd last item of splitted array to remove the extension
     const oldPublicId = product.image.split(/[/.]/)[product.image.split(/[/.]/).length - 2]
-    const [publicId, setPublicId] = useState('') //Cloudinary public_Id, get when upload to cloudinary media, used for cancel if remove  
-    const [imageError, setImageError] = useState(false) //Used went the upload size is bigger than 10MB
-    const [loading, setLoading] = useState(false) //Loading the dialog/popup when image is being loaded to cloudinary
-    const [openAlert, setOpenAlert] = useState(false) //Open/Close dialog/popup
+
+    //True when upload size is bigger than 10MB
+    const [imageError, setImageError] = useState(false)
+
+    //Loading the dialog/popup when image is being loaded to cloudinary
+    const [loading, setLoading] = useState(false)
+
+    //Open/Close dialog/popup
+    const [openAlert, setOpenAlert] = useState(false)
 
     //Change image preview whenever user upload a new image
     const handleChange = e => {
@@ -37,7 +56,28 @@ export default function UpdateProduct() {
         }
     }
 
-    //Update new image for current product to cloudinary
+    //Add new product to mockapi
+    async function fetchAdd(data) {
+        await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }, method: 'POST',
+            body: JSON.stringify({
+                name: data.name,
+                type: data.type,
+                quantity: Number(data.quantity),
+                price: data.price,
+                sale: data.sale,
+                image: imageUrl === '' ? 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg' : imageUrl,
+            })
+        })
+            .then((res) => res.json())
+            .catch((error) => { console.log(error) })
+        // console.log(response)
+    }
+
+    //Update current product to mockapi
     async function fetchUpdate(data) {
         await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product/${product.id}`, {
             headers: {
@@ -94,7 +134,7 @@ export default function UpdateProduct() {
 
     //MANAGE DIALOG
     //Run whenever submit the form. Action buttons should only appear when loading to cloudinary is completed
-    const confirmUpdate = () => {
+    const confirm = () => {
         setOpenAlert(true)
         if (file !== null) {
             setLoading(true)
@@ -103,7 +143,7 @@ export default function UpdateProduct() {
     }
 
     //Cancel action button
-    const cancelUpdate = () => {
+    const cancel = () => {
         if (file !== null) {
             removeImage(publicId)
         }
@@ -120,12 +160,19 @@ export default function UpdateProduct() {
             sale: product.sale,
         },
         onSubmit: (values, { resetForm }) => {
-            fetchUpdate(formik.values)
-            if (file !== null) {
-                removeImage(oldPublicId)
+            if (feature === "add") {
+                fetchAdd(values)
+                dispatch(productSlice.actions.setMessageNotification('New product added!'))
+                resetForm()
             }
-            dispatch(productSlice.actions.setMessageNotification('Product updated!'))
-            dispatch(productSlice.actions.switchView())
+            if (feature === "update") {
+                fetchUpdate(formik.values)
+                if (file !== null) {
+                    removeImage(oldPublicId)
+                }
+                dispatch(productSlice.actions.setMessageNotification('Product updated!'))
+                dispatch(productSlice.actions.switchView())
+            }
             setOpenAlert(false)
         },
         validationSchema: Yup.object({
@@ -135,7 +182,15 @@ export default function UpdateProduct() {
         }),
         validateOnChange: false,
         validateOnBlur: false,
-    });
+    })
+
+    //Validate action before submit
+    const check = () => {
+        console.log(formik.errors)
+        if (formik.errors.length <= 0) {
+            cancel()
+        }
+    }
 
     return (
         <>
@@ -144,19 +199,21 @@ export default function UpdateProduct() {
                     dispatch(productSlice.actions.switchView())
                 }}><ArrowBackIosIcon />Back to list view</Button>
             </div>
-            <h1>EDIT PRODUCT</h1>
+            {feature === 'add' ? <h1>ADD NEW PRODUCTS</h1> :
+                <h1>EDIT PRODUCT</h1>
+            }
             <form id='productForm' onSubmit={formik.handleSubmit}>
-
                 <TextField
                     fullWidth
                     label="Name"
                     name="name"
                     value={formik.values.name}
                     onChange={formik.handleChange}
-                    style={{ marginTop: '20px', marginBottom: '20px' }}
+                    style={{ marginTop: '20px' }}
                 />
                 {formik.errors.name && (<Typography variant="caption" color="red">{formik.errors.name}</Typography>)}
-                <FormControl>
+                <br />
+                <FormControl style={{ marginTop: '20px' }}>
                     <InputLabel>Type</InputLabel>
                     <Select
                         label="Type"
@@ -208,7 +265,7 @@ export default function UpdateProduct() {
                                 />
                                 :
                                 <>
-                                    {imageUrl === null ? <Typography>Click Browse.. to upload image. Keep the image in 1:1 ratio for better display</Typography>
+                                    {imageUrl === '' ? <Typography>Click Browse.. to upload image. Keep the image in 1:1 ratio for better display</Typography>
                                         :
                                         <img
                                             src={imageUrl}
@@ -233,18 +290,18 @@ export default function UpdateProduct() {
 
                 <div style={{ marginTop: '1rem' }}>
                     <Button variant="contained" endIcon={<SendIcon />}
-                        onClick={confirmUpdate}>
-                        Update
+                        onClick={confirm}>
+                        {feature === 'add' ? 'Add' : 'Update'}
                     </Button>
                 </div>
 
                 {/* Popup */}
                 <Dialog
                     open={openAlert}
-                    onClose={cancelUpdate}
+                    onClose={cancel}
                 >
                     <DialogTitle>
-                        Update this product?
+                        {feature === 'add' ? 'Add' : 'Update'} this product?
                     </DialogTitle>
                     {loading ?
                         <DialogContent>
@@ -256,9 +313,9 @@ export default function UpdateProduct() {
                     }
                     {!loading ?
                         <DialogActions>
-                            <Button onClick={cancelUpdate}>Cancel</Button>
-                            <Button color='error' type='submit' form='productForm'>
-                                Update
+                            <Button onClick={cancel}>Cancel</Button>
+                            <Button color='error' type='submit' form='productForm' onClick={check}>
+                                {feature === 'add' ? 'Add' : 'Update'}
                             </Button>
                         </DialogActions>
                         :

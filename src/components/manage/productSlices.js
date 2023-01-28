@@ -7,10 +7,10 @@ export const productSlice = createSlice({
         currentProduct: {
             id: '-1',
             name: '',
-            type: '',
+            type: 'Fruit',
             quantity: 0,
-            price: 0,
-            sale: true,
+            price: 1000,
+            sale: false,
             image: ''
         }, feature: 'view',
         notification: {
@@ -23,6 +23,15 @@ export const productSlice = createSlice({
             state.currentProduct = action.payload
         },
         switchView: (state) => {
+            state.currentProduct = {
+                id: '-1',
+                name: '',
+                type: 'Fruit',
+                quantity: 0,
+                price: 1000,
+                sale: false,
+                image: ''
+            }
             state.feature = 'view'
         },
         switchAdd: (state) => {

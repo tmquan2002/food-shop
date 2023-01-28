@@ -5,10 +5,9 @@ import { useState } from 'react';
 import { Alert, Snackbar, Typography } from '@mui/material';
 import UserList from './UserList';
 import ProductList from './ProductList';
-import AddProduct from './AddProduct';
-import UpdateProduct from './UpdateProduct';
 import { productSlice } from '../manage/productSlices'
 import { useDispatch, useSelector } from 'react-redux';
+import AddUpdateProduct from './AddUpdateProduct';
 
 function TabPanel(props) {
   const { children, value, index } = props;
@@ -26,10 +25,8 @@ function TabPanel(props) {
 
 function Feature(props) {
   const feature = props.feature;
-  if (feature === "add") {
-    return <AddProduct />;
-  } else if (feature === "update") {
-    return <UpdateProduct />
+  if (feature === "add" || feature === "update") {
+    return <AddUpdateProduct />
   }
   return <ProductList />;
 }
