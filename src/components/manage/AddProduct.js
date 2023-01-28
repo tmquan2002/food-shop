@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { productSlice } from '../manage/productSlices'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import SendIcon from '@mui/icons-material/Send';
@@ -10,7 +10,7 @@ import { useState } from 'react';
 export default function AddProduct() {
     const dispatch = useDispatch()
     const [file, setFile] = useState(null);
-    const [imageUrl, setImageUrl] = useState('https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg')
+    const [imageUrl, setImageUrl] = useState(null)
     const [publicId, setPublicId] = useState('')
     const [imageError, setImageError] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -19,7 +19,7 @@ export default function AddProduct() {
     const handleChange = e => {
         var files = e.target.files;
         var filesArray = [].slice.call(files);
-        console.log(filesArray[0])
+        // console.log(filesArray[0])
         if (filesArray[0] !== undefined) {
             if (filesArray[0].size >= 10485760) {
                 setImageError(true)
@@ -28,7 +28,7 @@ export default function AddProduct() {
                 setFile(filesArray[0])
             }
         }
-    };
+    }
 
     async function fetchAdd(data) {
         await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product`, {
@@ -50,6 +50,7 @@ export default function AddProduct() {
         // console.log(response)
     }
 
+    //Upload to cloudinary media library
     const uploadImage = async (file) => {
         const formData = new FormData();
         formData.append('file', file)
@@ -64,6 +65,7 @@ export default function AddProduct() {
         setLoading(false)
     }
 
+    //Remove from cloudinary media library
     const removeImage = async (public_Id) => {
         // console.log(public_Id)
         const timestamp = Math.floor(new Date().getTime() / 1000)
@@ -99,7 +101,7 @@ export default function AddProduct() {
             type: 'Fruit',
             quantity: 0,
             price: 1000,
-            sale: true,
+            sale: false,
         },
         onSubmit: (values, { resetForm }) => {
             fetchAdd(values)
@@ -131,11 +133,10 @@ export default function AddProduct() {
                     name="name"
                     value={formik.values.name}
                     onChange={formik.handleChange}
-                    style={{ marginTop: '20px' }}
+                    style={{ marginTop: '20px', marginBottom: '20px' }}
                 />
-                {formik.errors.name && (<Typography variant="caption" color="red" style={{ marginBottom: '2' }}>{formik.errors.name}</Typography>)}
-                <br />
-                <FormControl style={{ marginTop: '20px' }}>
+                {formik.errors.name && (<Typography variant="caption" color="red">{formik.errors.name}</Typography>)}
+                <FormControl>
                     <InputLabel>Type</InputLabel>
                     <Select
                         label="Type"

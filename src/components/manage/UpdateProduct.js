@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { productSlice } from '../manage/productSlices'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import SendIcon from '@mui/icons-material/Send';
-import { Button, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
@@ -11,18 +11,31 @@ export default function UpdateProduct() {
     const product = useSelector((state) => state.manageProduct.currentProduct)
     const dispatch = useDispatch()
     const [file, setFile] = useState(null);
-    const [imageUrl, setImageUrl] = useState(product.image)
-    const [loading, setLoading] = useState(false)
+    const [imageUrl, setImageUrl] = useState(product.image === 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg' ? null : product.image)
+    //In cloudinary, old public_Id is the last string of the imageURL
+    //Method: split imageURL with "/" and get the last item in the array
+    const [oldPublicId, setOldPublicId] = useState(product.image.split('/')[product.image.split('/').length - 1])
+    const [publicId, setPublicId] = useState('') //Cloudinary public_Id, get when upload to cloudinary media, used for cancel if remove  
+    const [imageError, setImageError] = useState(false) //Used went the upload size is bigger than 10MB
+    const [loading, setLoading] = useState(false) //Loading the dialog/popup when image is being loaded to cloudinary
+    const [openAlert, setOpenAlert] = useState(false) //Open/Close dialog/popup
 
+    //Change image preview whenever user upload a new image
     const handleChange = e => {
         var files = e.target.files;
         var filesArray = [].slice.call(files);
-        // console.log(filesArray)
-        setFile(filesArray[0])
-        setLoading(true)
-        uploadImage(filesArray[0])
-    };
+        // console.log(filesArray[0])
+        if (filesArray[0] !== undefined) {
+            if (filesArray[0].size >= 10485760) {
+                setImageError(true)
+            } else {
+                setImageError(false)
+                setFile(filesArray[0])
+            }
+        }
+    }
 
+    //Update new image for current product to cloudinary
     async function fetchUpdate(data) {
         await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product/${product.id}`, {
             headers: {
@@ -43,6 +56,7 @@ export default function UpdateProduct() {
         // console.log(response)
     }
 
+    //Upload to cloudinary media library
     const uploadImage = async (file) => {
         const formData = new FormData();
         formData.append('file', file)
@@ -51,11 +65,48 @@ export default function UpdateProduct() {
             method: 'POST',
             body: formData
         }).then(r => r.json());
+        console.log(data)
         setImageUrl(data.url)
-        // setCurrPublicId(data.public_id)
+        setPublicId(data.public_id)
         setLoading(false)
-    };
+    }
 
+    //Remove from cloudinary media library
+    const removeImage = async (public_Id) => {
+        // console.log(public_Id)
+        const timestamp = Math.floor(new Date().getTime() / 1000)
+        const string = `public_id=${public_Id}&timestamp=${timestamp}jLbWAhxfoILaqRYrGfIERFydbi0`
+        const sha1 = require('js-sha1');
+        const signature = sha1(string)
+
+        const formData = new FormData();
+        formData.append('public_id', public_Id);
+        formData.append('signature', signature);
+        formData.append('api_key', `412722435262794`);
+        formData.append('timestamp', timestamp);
+        await fetch(`https://api.cloudinary.com/v1_1/tmquan/image/destroy`, {
+            method: 'POST',
+            body: formData
+        }).then(r => r.json());
+    }
+
+    //MANAGE DIALOG
+    //Run whenever submit the form. Action buttons should only appear when loading to cloudinary is completed
+    const confirmUpdate = () => {
+        setOpenAlert(true)
+        if (file !== null) {
+            setLoading(true)
+            uploadImage(file)
+        }
+    }
+
+    //Cancel action button
+    const cancelUpdate = () => {
+        removeImage(publicId)
+        setOpenAlert(false)
+    }
+
+    //Manage form with Formik
     const formik = useFormik({
         initialValues: {
             name: product.name,
@@ -63,14 +114,18 @@ export default function UpdateProduct() {
             quantity: product.quantity,
             price: product.price,
             sale: product.sale,
-            image: product.image,
         },
-        onSubmit: () => {
+        onSubmit: (values, { resetForm }) => {
             fetchUpdate(formik.values)
+            if (file !== null) {
+                removeImage(oldPublicId)
+            }
             dispatch(productSlice.actions.setMessageNotification('Product updated!'))
+            dispatch(productSlice.actions.switchView())
+            setOpenAlert(false)
         },
         validationSchema: Yup.object({
-            name: Yup.string().required("Name is required.").min(2, "Must be 2 characters or more"),
+            name: Yup.string().required("Name is required.").min(2, "Must be 2 characters or more").max(20, "Keep the length under 20 characters"),
             quantity: Yup.number().integer().required("Quantity is required.").typeError("Please enter a valid number").max(300, "No more than 300").min(0, "Must be a positive number"),
             price: Yup.number().integer().required("Price is required.").typeError("Please enter a valid number").min(1000, "Most food products are more than 1000 VND"),
         }),
@@ -86,7 +141,7 @@ export default function UpdateProduct() {
                 }}><ArrowBackIosIcon />Back to list view</Button>
             </div>
             <h1>EDIT PRODUCT</h1>
-            <form onSubmit={formik.handleSubmit}>
+            <form id='productForm' onSubmit={formik.handleSubmit}>
 
                 <TextField
                     fullWidth
@@ -136,41 +191,80 @@ export default function UpdateProduct() {
                     <FormControlLabel control={<Switch checked={formik.values.sale} />}
                         label="Sale" name='sale' onClick={formik.handleChange} />
                 </div>
-                <Stack direction="row" alignItems="center" spacing={2}>
-                    {!loading ?
+                <div style={{ textAlign: 'center', height: '100%', padding: '3%', borderStyle: 'dashed', borderColor: '#FFC5B3' }}>
+                    {imageError ?
+                        <Typography color='red'>File too large! Please upload image under 10MB</Typography>
+                        :
                         <>
-                            <Button variant="contained" component="label">
-                                Upload
-                                <input
-                                    hidden
-                                    accept="image/*"
-                                    type="file"
-                                    onChange={e => handleChange(e)}
-                                />
-                            </Button>
-                            <div>
+                            {file !== null ?
                                 <img
-                                    src={(file !== null) ? URL.createObjectURL(file) : imageUrl}
-                                    style={{ width: 300 }}
+                                    src={URL.createObjectURL(file)}
+                                    style={{ width: '100%', height: 300, objectFit: 'contain' }}
                                     alt="preview"
                                 />
-                            </div>
+                                :
+                                <>
+                                    {imageUrl === null ? <Typography>Click Browse.. to upload image. Keep the image in 1:1 ratio for better display</Typography>
+                                        :
+                                        <img
+                                            src={imageUrl}
+                                            style={{ width: '100%', height: 300, objectFit: 'contain' }}
+                                            alt="preview"
+                                        />
+                                    }
+                                </>
+                            }
                         </>
-                        :
-                        <Button variant="contained" disabled component="label">
-                            Loading...
-                        </Button>
                     }
-                </Stack>
+                    <Button variant="contained" component="label">
+                        Browse...
+                        <input
+                            hidden
+                            accept="image/*"
+                            type="file"
+                            onChange={e => handleChange(e)}
+                        />
+                    </Button>
+                </div>
+
                 <div style={{ marginTop: '1rem' }}>
-                    <Button
-                        type='submit'
-                        variant="contained"
-                        endIcon={<SendIcon />}
-                    >
+                    <Button variant="contained" endIcon={<SendIcon />}
+                        onClick={confirmUpdate}>
                         Update
                     </Button>
                 </div>
+
+                {/* Popup */}
+                <Dialog
+                    open={openAlert}
+                    onClose={cancelUpdate}
+                >
+                    <DialogTitle>
+                        Update this product?
+                    </DialogTitle>
+                    {loading ?
+                        <DialogContent>
+                            <DialogContentText>
+                                Please wait for a bit, the image is being loaded to the server
+                            </DialogContentText>
+                        </DialogContent> :
+                        <></>
+                    }
+                    {!loading ?
+                        <DialogActions>
+                            <Button onClick={cancelUpdate}>Cancel</Button>
+                            <Button color='error' type='submit' form='productForm'>
+                                Update
+                            </Button>
+                        </DialogActions>
+                        :
+                        <DialogActions>
+                            <Button color='error' disabled>
+                                <CircularProgress />
+                            </Button>
+                        </DialogActions>
+                    }
+                </Dialog>
             </form>
         </>
     )
