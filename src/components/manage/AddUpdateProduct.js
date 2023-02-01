@@ -186,10 +186,13 @@ export default function AddUpdateProduct() {
 
     //Validate action before submit
     const check = () => {
-        console.log(formik.errors)
-        if (formik.errors.length <= 0) {
-            cancel()
-        }
+        formik.validateForm().then((errorMess) => {
+            //No errors means formik.errors Object is empty: {}
+            //Onject.keys used to count how many attribute an object has
+            if (Object.keys(errorMess).length === 0) {
+                confirm()
+            }
+        })
     }
 
     return (
@@ -290,7 +293,7 @@ export default function AddUpdateProduct() {
 
                 <div style={{ marginTop: '1rem' }}>
                     <Button variant="contained" endIcon={<SendIcon />}
-                        onClick={confirm}>
+                        onClick={check}>
                         {feature === 'add' ? 'Add' : 'Update'}
                     </Button>
                 </div>
@@ -314,7 +317,7 @@ export default function AddUpdateProduct() {
                     {!loading ?
                         <DialogActions>
                             <Button onClick={cancel}>Cancel</Button>
-                            <Button color='error' type='submit' form='productForm' onClick={check}>
+                            <Button color='error' type='submit' form='productForm'>
                                 {feature === 'add' ? 'Add' : 'Update'}
                             </Button>
                         </DialogActions>
