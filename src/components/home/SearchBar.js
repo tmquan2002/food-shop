@@ -1,12 +1,13 @@
 import { FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { homeSlice } from "./homeSlices";
 
 export default function HomeSearchBar() {
 
     const dispatch = useDispatch()
-    const [type, setType] = useState('');
+    const [type, setType] = useState(useSelector((state) => state.manageHome.searchType))
+
 
     const handleChange = (e) => {
         setType(e.target.value);
@@ -25,7 +26,7 @@ export default function HomeSearchBar() {
             <FormControl>
                 <InputLabel>Type</InputLabel>
                 <Select
-                    value={type}
+                    value={type === '' ? 'All' : type}
                     label="Type"
                     onChange={handleChange}
                     autoWidth

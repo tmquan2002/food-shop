@@ -58,7 +58,11 @@ export default function HomeList(props) {
                     arrays.push(data.splice(0, itemsPerPage));
                 }
             }
-            setSplitData(arrays)
+            if (arrays.length === 0) {
+                setSplitData([[]])
+            } else {
+                setSplitData(arrays)
+            }
             setRender(true)
         }
         fetchList()
@@ -71,7 +75,7 @@ export default function HomeList(props) {
                 : <Typography style={{ fontSize: '1rem' }} color='primary'><strong>PRODUCTS ON SALE</strong></Typography>}
             {render ? <Stack spacing={2}>
                 <div className="data-list-container">
-                    {splitData[page - 1].map((v) => (
+                    {splitData[page - 1]?.map((v) => (
                         <div className="card-data" key={v.id}>
                             <Card sx={{ width: 200, height: 300 }}>
                                 <CardMedia
