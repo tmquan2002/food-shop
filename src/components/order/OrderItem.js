@@ -5,7 +5,7 @@ export default function OrderItem(props) {
     return (
         <>
             <Grid item xs={1} md={1} lg={1}>
-                <img alt={props.product.name} src={props.product.image} width={70} height={70} />
+                <img alt={props.product.name} src={props.product.image} width={70} height={70} style={{ objectFit: 'contain' }}/>
             </Grid>
             <Grid item xs={6} md={8} lg={8}>
                 <div style={{fontWeight: 600, fontSize: '25px'}}>{props.product.name}</div>

@@ -29,7 +29,7 @@ export default function CartItem(props) {
     return (
         <>
             <Grid item xs={1} md={1} lg={1}>
-                <img alt={props.product.name} src={props.product.image} width={100} height={100} />
+                <img alt={props.product.name} src={props.product.image} width={100} height={100} style={{ objectFit: 'contain' }}/>
             </Grid>
             <Grid item xs={6} md={8} lg={8}>
                 <div style={{fontWeight: 600, fontSize: '25px'}}>{props.product.name}</div>
