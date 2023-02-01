@@ -90,7 +90,7 @@ export default function AddUpdateProduct() {
                 quantity: Number(data.quantity),
                 price: data.price,
                 sale: data.sale,
-                image: imageUrl,
+                image: imageUrl === '' ? 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg' : imageUrl,
             })
         })
             .then((res) => res.json())

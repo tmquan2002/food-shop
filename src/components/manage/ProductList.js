@@ -1,13 +1,12 @@
 import { Button, IconButton, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { productSlice } from '../manage/productSlices'
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function ProductList() {
-    // const product = useSelector((state) => state.manageProduct.currentProduct)
     const dispatch = useDispatch()
     const [data, setData] = useState([])
     const [render, setRender] = useState(false)
