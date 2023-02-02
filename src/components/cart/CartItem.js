@@ -6,17 +6,21 @@ import { homeSlice } from "../home/homeSlices"
 export default function CartItem(props) {
     const [quantity, setQuantity] = useState(props.product.quantity)
     const [openAlert, setOpenAlert] = useState(false)
-    const oldQuantity = useRef(0)
+    //Store old quantity, won't change when rerender
+    const oldQuantity = useRef(props.product.quantity)
     const dispatch = useDispatch()
 
     const handleChange = (e) => {
         setQuantity(e.target.value)
     }
 
+    //Change only after click out of input
     const handleBlur = () => {
+        //Invalid quantity
         if (quantity <= 0 || quantity === "") {
             setQuantity(oldQuantity.current)
         } else {
+            //Set new quantity if value is valid
             oldQuantity.current = quantity
             const payload = {
                 id: props.product.id,

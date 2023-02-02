@@ -8,12 +8,13 @@ export default function HomeSearchBar() {
     const dispatch = useDispatch()
     const [type, setType] = useState(useSelector((state) => state.manageHome.searchType))
 
-
+    //Change search type on store
     const handleChange = (e) => {
         setType(e.target.value);
         dispatch(homeSlice.actions.changeSearchType(e.target.value))
     }
 
+    //Change only when press Enter
     const handleSearch = (e) => {
         if (e.key === "Enter") {
             dispatch(homeSlice.actions.changeSearchValue(e.target.value))

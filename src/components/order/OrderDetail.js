@@ -5,6 +5,7 @@ import OrderItem from "./OrderItem";
 export default function OrderDetail(props) {
 
     //en-za format: YYYY/MM/DD
+    //Date is stored in millisecond
     const date = (new Date(props.data.orderDate)).toLocaleDateString("en-za")
     const [render, setRender] = useState(false)
     const [data, setData] = useState([])
@@ -17,7 +18,10 @@ export default function OrderDetail(props) {
                 .then((res) => res.json())
                 .catch((error) => { console.log(error) })
             const list = response
+            //Filter list of all products using orderProductIds as reference
             const filterList = list.filter(function (item) {
+                //Each items on the list if not found in order product Ids will return -1
+                //Remove this product in the list this case
                 return productIds.indexOf(item.id) !== -1;
             });
             for (let i = 0; i < filterList.length; i++) {

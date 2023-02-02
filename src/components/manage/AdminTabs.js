@@ -9,6 +9,7 @@ import { productSlice } from '../manage/productSlices'
 import { useDispatch, useSelector } from 'react-redux';
 import AddUpdateProduct from './AddUpdateProduct';
 
+//Change children based on tab value
 function TabPanel(props) {
   const { children, value, index } = props;
 
@@ -23,6 +24,7 @@ function TabPanel(props) {
   );
 }
 
+//Change component based on current feature in redux store
 function Feature(props) {
   const feature = props.feature;
   if (feature === "add" || feature === "update") {

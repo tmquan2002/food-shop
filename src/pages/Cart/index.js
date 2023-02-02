@@ -37,6 +37,7 @@ export default function CartPage() {
                 'Content-Type': 'application/json'
             }, method: 'POST',
             body: JSON.stringify({
+                //Date.now(): get current date, store in millisecond
                 orderDate: Date.now(),
                 userId: user.id,
                 productIds: productIds,
