@@ -4,10 +4,12 @@ import { notiAndSwitchPageSlices } from "./notiAndSwitchPageSlices"
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { homeSlice } from "./homeSlices";
 
+//Detail of one chosen product
 export default function Detail() {
     const dispatch = useDispatch()
     const product = useSelector((state) => state.manageHome.currentProduct)
 
+    //Add to cart in redux store
     const handleBuy = (data) => {
         let temp = {
             id: data.id,
@@ -22,6 +24,7 @@ export default function Detail() {
         dispatch(notiAndSwitchPageSlices.actions.setMessageNotification("Product Added!"))
     }
 
+    //Get current product in redux store and show to the user
     return (
         <>
             <div style={{ marginBottom: '1rem' }}>

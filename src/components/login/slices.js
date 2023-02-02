@@ -43,18 +43,19 @@ export const userSlice = createSlice({
     }
 })
 
+//Async thunk allow you to do some actions before actually dispatch 
 export const checkUserAsync = createAsyncThunk('checkLoginUser', async (data) => {
     let currentUser = data;
-    //Get the list of all user (Who has logged in to the app before)
+    //Get the list of all user (Has logged in to the app before)
     const response = await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/User`)
         .then((res) => res.json())
         .catch((error) => { console.log(error) })
     let exist = false;
 
-    //Check if this user has logged in to the app before
+    //Check if this is the new user (Don't present in mockapi database)
     response.forEach(e => {
         if (e.email === data.email) {
-            //Get the user id
+            //Get the user id and role if found
             currentUser = {
                 ...data,
                 role: e.role,
@@ -62,9 +63,9 @@ export const checkUserAsync = createAsyncThunk('checkLoginUser', async (data) =>
             }
             exist = true
         }
-    });
+    })
 
-    //If this is a new user, add to the api list and get the id
+    //If this is a new user, add to the mockapi list and get the id
     if (!exist) {
         const responseAdd = await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/User`, {
             headers: {
@@ -80,7 +81,7 @@ export const checkUserAsync = createAsyncThunk('checkLoginUser', async (data) =>
         })
             .then((res) => res.json())
             .catch((error) => { console.log(error) })
-        //Get the user id
+        //After add, mockapi return userId, add this id to current logged in user in redux store
         currentUser = {
             ...data,
             id: responseAdd.id

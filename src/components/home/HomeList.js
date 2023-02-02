@@ -9,9 +9,13 @@ import { notiAndSwitchPageSlices } from './notiAndSwitchPageSlices';
 
 export default function HomeList(props) {
 
+    //Numbers of product show in 1 page
     const itemsPerPage = 4
+    //Each nested array will have n itemsPerPage above
     const [splitData, setSplitData] = useState([[]])
+    //Total pages
     const [totalPages, setTotalPages] = useState(1)
+    //Current page
     const [page, setPage] = useState(1);
     const [render, setRender] = useState(false)
     const [renderCount, setRenderCount] = useState(0)
@@ -24,7 +28,9 @@ export default function HomeList(props) {
         dispatch(notiAndSwitchPageSlices.actions.switchPage("detail"))
     }
 
+    //Add to cart in redux store
     const handleBuy = (data) => {
+        //Default quantity is 1
         let temp = {
             id: data.id,
             name: data.name,
@@ -50,6 +56,7 @@ export default function HomeList(props) {
                     && s.type.toLowerCase().includes(searchType.toLowerCase()))
 
             var arrays = []
+            //Round up
             setTotalPages(Math.ceil(data.length / itemsPerPage))
             if (data.length <= itemsPerPage) {
                 arrays.push(data.splice(0, data.length))
@@ -75,6 +82,7 @@ export default function HomeList(props) {
                 : <Typography style={{ fontSize: '1rem' }} color='primary'><strong>PRODUCTS ON SALE</strong></Typography>}
             {render ? <Stack spacing={2}>
                 <div className="data-list-container">
+                    {/* Prevent undefined list */}
                     {splitData[page - 1]?.map((v) => (
                         <div className="card-data" key={v.id}>
                             <Card sx={{ width: 200, height: 300 }}>

@@ -7,12 +7,21 @@ import MainNavbar from "../../components/Navbar";
 
 export default function CartPage() {
 
+    //Alert
     const [openSnack, setOpenSnack] = useState(false)
+    //Alert message
+    const [snackMess, setSnackMess] = useState('')
+    //Confirm delete or show message when checkout
     const [openDialog, setOpenDialog] = useState(false)
+    //For loading the cart
     const [loading, setLoading] = useState(false)
+    //Show message
     const [dialogMess, setDialogMess] = useState("")
+    //Open dialog based on action (checkout and remove)
+    const [action, setAction] = useState('checkout')
     const user = useSelector((state) => state.loginUser.user)
     const cart = useSelector((state) => state.manageHome.cart)
+    //All products in cart
     const productIds = cart.map(item => item.id)
     const productQuantities = cart.map(item => item.quantity)
     const totalPrice = cart.reduce((starter, product) => {
@@ -20,6 +29,7 @@ export default function CartPage() {
     }, 0);
     const dispatch = useDispatch()
 
+    //Add order to mockapi when checkout successful
     async function checkout() {
         await fetch(`https://63bf8018e262345656ea4182.mockapi.io/mystore/v1/Order`, {
             headers: {
@@ -39,6 +49,7 @@ export default function CartPage() {
         // console.log(response)
     }
 
+    //Update quantity onBlur
     async function updateQuantity(data) {
         await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product/${data.id}`, {
             headers: {
@@ -54,7 +65,9 @@ export default function CartPage() {
         // console.log(response)
     }
 
+    //Actions done before checkout
     const handleCheckout = () => {
+        setAction('checkout')
         setLoading(true)
         if (!user.login) {
             //Check login
@@ -77,6 +90,7 @@ export default function CartPage() {
                         quantityError.push(item.name)
                     }
                 })
+                //Don't checkout if the quantity is bigger than in app store
                 if (quantityError.length !== 0) {
                     setDialogMess("There's not enough " + quantityError.join(', ') + " in store. Please edit the quantity or remove the product, you can check the amount left in our store by viewing the detail")
                     setOpenDialog(true)
@@ -93,10 +107,26 @@ export default function CartPage() {
                     })
                     dispatch(homeSlice.actions.emptyCart())
                     setOpenSnack(true)
+                    setSnackMess('Checkout successful!')
                 }
             }
             fetchList()
         }
+    }
+
+    //Confirm before remove all product in cart
+    const handleRemoveCart = () => {
+        setAction('remove')
+        setOpenDialog(true)
+        setDialogMess("Remove your cart?")
+    }
+
+    //Remove confirmed
+    const confirmRemoved = () => {
+        dispatch(homeSlice.actions.emptyCart())
+        setOpenSnack(true)
+        setSnackMess('Cart removed!')
+        setOpenDialog(false)
     }
 
     return (
@@ -111,9 +141,15 @@ export default function CartPage() {
                     <div style={{ position: 'absolute', top: '1rem', right: '1rem' }}>
                         <div style={{ fontSize: '30px', color: '#d32f2f', fontWeight: '600' }}>Total: {totalPrice} VND</div>
                         {!loading ?
-                            <Button fullWidth size="large" variant="contained" onClick={handleCheckout}>CHECKOUT</Button>
+                            <>
+                                <Button fullWidth size="large" variant="contained" onClick={handleCheckout}>CHECKOUT</Button>
+                                <Button fullWidth size="large" onClick={handleRemoveCart}>REMOVE CART</Button>
+                            </>
                             :
-                            <Button fullWidth size="large" variant="contained" disabled>CHECKOUT</Button>
+                            <>
+                                <Button fullWidth size="large" variant="contained" disabled>CHECKOUT</Button>
+                                <Button fullWidth size="large" disabled>REMOVE CART</Button>
+                            </>
                         }
                     </div>
                 </div>
@@ -127,7 +163,7 @@ export default function CartPage() {
                     setLoading(false)
                 }}
                     severity="success" sx={{ width: '100%' }}>
-                    Checkout successful!
+                    {snackMess}
                 </Alert>
             </Snackbar>
 
@@ -140,10 +176,21 @@ export default function CartPage() {
                     {dialogMess}
                 </DialogTitle>
                 <DialogActions>
-                    <Button onClick={() => {
-                        setOpenDialog(false)
-                        setLoading(false)
-                    }}>OK</Button>
+                    {action === 'checkout' ?
+                        <Button onClick={() => {
+                            setOpenDialog(false)
+                            setLoading(false)
+                        }}>OK</Button>
+                        :
+                        <>
+                            <Button onClick={() => { setOpenDialog(false) }}>
+                                CANCEL
+                            </Button>
+                            <Button color='error' onClick={confirmRemoved} autoFocus>
+                                REMOVE
+                            </Button>
+                        </>
+                    }
                 </DialogActions>
             </Dialog>
         </>

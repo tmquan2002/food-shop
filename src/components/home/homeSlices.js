@@ -19,12 +19,14 @@ export const homeSlice = createSlice({
     reducers: {
         addToCart: (state, action) => {
             let old = false;
+            //Add 1 to quantity if this product has already in cart
             for (let i = 0; i < state.cart.length; i++) {
                 if (state.cart[i].id === action.payload.id) {
                     state.cart[i].quantity = Number(state.cart[i].quantity) + 1
                     old = true
                 }
             }
+            //Default quantity is 1, add new product to cart
             if (!old) {
                 state.cart.push(action.payload);
             }
@@ -52,6 +54,7 @@ export const homeSlice = createSlice({
                 state.searchType = action.payload
             }
         },
+        //For detail pages
         viewCurrentProduct: (state, action) => {
             state.currentProduct = action.payload
         }

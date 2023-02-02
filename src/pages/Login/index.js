@@ -16,7 +16,7 @@ export default function GoogleLogin() {
         /* global google*/
         const handleCredentialResponse = (response) => {
             var decoded = jwt_decode(response.credential)
-            // console.log(decoded)
+            //Get logged in Google account, send to redux action
             const user = {
                 name: decoded.name,
                 avatar: decoded.picture,
@@ -27,10 +27,12 @@ export default function GoogleLogin() {
             dispatch(checkUserAsync(user))
             navigate("/")
         }
+        //Use registered id to run google login api
         google.accounts.id.initialize({
             client_id: "606288464608-1s87pnv2ldhmv0fg75158lmlmdi88to3.apps.googleusercontent.com",
             callback: handleCredentialResponse,
         });
+        //Google login button
         google.accounts.id.renderButton(
             document.getElementById("buttonDiv"),
             { theme: "outline", size: "large" }  // customization attributes
