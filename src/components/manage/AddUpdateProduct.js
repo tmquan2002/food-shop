@@ -107,7 +107,7 @@ export default function AddUpdateProduct() {
             method: 'POST',
             body: formData
         }).then(r => r.json());
-        console.log(data)
+        // console.log(data)
         setImageUrl(data.url)
         setPublicId(data.public_id)
         setLoading(false)
@@ -256,30 +256,29 @@ export default function AddUpdateProduct() {
                         label="Sale" name='sale' onClick={formik.handleChange} />
                 </div>
                 <div style={{ textAlign: 'center', height: '100%', padding: '3%', borderStyle: 'dashed', borderColor: '#FFC5B3' }}>
-                    {imageError ?
-                        <Typography color='red'>File too large! Please upload image under 10MB</Typography>
+                    {file !== null ?
+                        <img
+                            src={URL.createObjectURL(file)}
+                            style={{ width: '100%', height: 300, objectFit: 'contain' }}
+                            alt="preview"
+                        />
                         :
                         <>
-                            {file !== null ?
+                            {imageUrl === '' ? <Typography>Click Browse.. to upload image. Keep the image in 1:1 ratio for better display</Typography>
+                                :
                                 <img
-                                    src={URL.createObjectURL(file)}
+                                    src={imageUrl}
                                     style={{ width: '100%', height: 300, objectFit: 'contain' }}
                                     alt="preview"
                                 />
-                                :
-                                <>
-                                    {imageUrl === '' ? <Typography>Click Browse.. to upload image. Keep the image in 1:1 ratio for better display</Typography>
-                                        :
-                                        <img
-                                            src={imageUrl}
-                                            style={{ width: '100%', height: 300, objectFit: 'contain' }}
-                                            alt="preview"
-                                        />
-                                    }
-                                </>
                             }
                         </>
                     }
+                    {imageError ?
+                        <Typography color='red'>File too large! Please upload image under 10MB</Typography>
+                        :
+                        <></>
+                    }                    
                     <Button variant="contained" component="label">
                         Browse...
                         <input
