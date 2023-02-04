@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Grid, Skeleton } from "@mui/material";
 import { useEffect, useState } from "react";
 import OrderItem from "./OrderItem";
 
@@ -6,13 +6,13 @@ export default function OrderDetail(props) {
 
     //en-za format: YYYY/MM/DD
     //Date is stored in millisecond
-    const date = (new Date(props.data.orderDate)).toLocaleDateString("en-za")
+    const date = props.skeleton ? "skeleton" : (new Date(props.data.orderDate)).toLocaleDateString("en-za")
     const [render, setRender] = useState(false)
     const [data, setData] = useState([])
     //List of product Ids the current user have in 1 order
-    const productIds = props.data.productIds
+    const productIds = props.skeleton ? [] : props.data.productIds
     //List of product quantities Ids the current user have in 1 order, the order is the same as product Ids
-    const productQuantities = props.data.productQuantities
+    const productQuantities = props.skeleton ? [] : props.data.productQuantities
 
     useEffect(() => {
         async function fetchList() {
@@ -32,13 +32,15 @@ export default function OrderDetail(props) {
             setData(filterList)
             setRender(true)
         }
-        fetchList()
+        if (!props.skeleton) {
+            fetchList()
+        }
     }, [productIds, productQuantities])
 
     return (
-        <>
+        <div style={{ padding: '2rem' }}>
             {render ?
-                <div style={{ padding: '1rem' }}>
+                <>
                     <h3 style={{ marginBottom: '1rem' }}>Order Date: {date}</h3>
                     <Grid container spacing={2} justifyContent='space-between'>
                         {data.map((info) => (
@@ -46,9 +48,17 @@ export default function OrderDetail(props) {
                         ))}
                     </Grid>
                     <h3 style={{ fontWeight: 600, textAlign: 'right', color: 'red' }}>Total: {props.data.total} VND</h3>
-                </div>
-                : <></>
+                </>
+                :
+                <>
+                    <h3 style={{ marginBottom: '1rem' }}><Skeleton width={210} height={40} /></h3>
+                    <Grid container spacing={2} justifyContent='space-between'>
+                        {[...Array(2).keys()].map((key) => (
+                            <OrderItem skeleton key={key} />
+                        ))}
+                    </Grid>
+                </>
             }
-        </>
+        </div>
     )
 }
