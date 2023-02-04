@@ -21,9 +21,10 @@ export default function CartPage() {
     const [action, setAction] = useState('checkout')
     const user = useSelector((state) => state.loginUser.user)
     const cart = useSelector((state) => state.manageHome.cart)
-    //All products in cart
+    //All products in cart. Product Ids will corresponding match order with Product quantities 
     const productIds = cart.map(item => item.id)
     const productQuantities = cart.map(item => item.quantity)
+    //Using reduce to calculate the total price for the order by get quantity and price
     const totalPrice = cart.reduce((starter, product) => {
         return starter + Number(product.price) * Number(product.quantity);
     }, 0);
@@ -31,7 +32,7 @@ export default function CartPage() {
 
     //Add order to mockapi when checkout successful
     async function checkout() {
-        await fetch(`https://63bf8018e262345656ea4182.mockapi.io/mystore/v1/Order`, {
+        await fetch(`${process.env.REACT_APP_MOCKAPI_ORDER}`, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -50,9 +51,9 @@ export default function CartPage() {
         // console.log(response)
     }
 
-    //Update quantity onBlur
+    //Update new quantity in store after checkout
     async function updateQuantity(data) {
-        await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product/${data.id}`, {
+        await fetch(`${process.env.REACT_APP_MOCKAPI_1}/Product/${data.id}`, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -81,7 +82,7 @@ export default function CartPage() {
             //Check Quantity in cart and quantity in store            
         } else {
             async function fetchList() {
-                const response = await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product`)
+                const response = await fetch(`${process.env.REACT_APP_MOCKAPI_1}/Product`)
                     .then((res) => res.json())
                     .catch((error) => { console.log(error) })
                 let quantityError = []
@@ -96,7 +97,7 @@ export default function CartPage() {
                     setDialogMess("There's not enough " + quantityError.join(', ') + " in store. Please edit the quantity or remove the product, you can check the amount left in our store by viewing the detail")
                     setOpenDialog(true)
                 } else {
-                    //Empty cart, add the order to mockapi and update quantity in store
+                    //Empty cart, add the order to mockapi and update quantity in mockapi store
                     checkout()
                     cart.forEach(item => {
                         let storeQuantity = (response.find(obj => obj.id === item.id)).quantity;

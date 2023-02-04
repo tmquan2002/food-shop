@@ -9,12 +9,14 @@ export default function OrderDetail(props) {
     const date = (new Date(props.data.orderDate)).toLocaleDateString("en-za")
     const [render, setRender] = useState(false)
     const [data, setData] = useState([])
+    //List of product Ids the current user have in 1 order
     const productIds = props.data.productIds
+    //List of product quantities Ids the current user have in 1 order, the order is the same as product Ids
     const productQuantities = props.data.productQuantities
 
     useEffect(() => {
         async function fetchList() {
-            const response = await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product`)
+            const response = await fetch(`${process.env.REACT_APP_MOCKAPI_1}/Product`)
                 .then((res) => res.json())
                 .catch((error) => { console.log(error) })
             const list = response

@@ -23,7 +23,7 @@ export default function ProductList() {
     }
 
     // async function deleteProduct() {
-    //     await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product/${product.id}`, { method: 'DELETE' })
+    //     await fetch(`${process.env.REACT_APP_MOCKAPI_1}/Product/${product.id}`, { method: 'DELETE' })
     //         .then((res) => res.json())
     //         .catch((error) => { console.log(error) })
     //     dispatch(productSlice.actions.setMessageNotification("Delete successful!"))
@@ -34,7 +34,7 @@ export default function ProductList() {
 
     useEffect(() => {
         async function fetchList() {
-            const response = await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product`)
+            const response = await fetch(`${process.env.REACT_APP_MOCKAPI_1}/Product`)
                 .then((res) => res.json())
                 .catch((error) => { console.log(error) })
             const list = response
@@ -47,7 +47,7 @@ export default function ProductList() {
     return (
         <>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                <div style={{ fontSize: '2rem' }}><strong>PRODUCT LIST</strong></div>
+                <div style={{ fontSize: '2rem' }}><b>PRODUCT LIST</b></div>
                 <Button variant="contained" onClick={() => { dispatch(productSlice.actions.switchAdd()) }}><AddIcon />New Product</Button>
             </div>
             <TextField fullWidth label="Search name (Enter to search)" variant="outlined" onKeyDown={handleSearch} size='small' />
@@ -55,12 +55,12 @@ export default function ProductList() {
                 <Table stickyHeader>
                     <TableHead>
                         <TableRow>
-                            <TableCell><strong>ID</strong></TableCell>
-                            <TableCell><strong>Name</strong></TableCell>
-                            <TableCell><strong>Type</strong></TableCell>
-                            <TableCell><strong>Quantity</strong></TableCell>
-                            <TableCell><strong>Price</strong></TableCell>
-                            <TableCell><strong>Sale</strong></TableCell>
+                            <TableCell><b>ID</b></TableCell>
+                            <TableCell><b>Name</b></TableCell>
+                            <TableCell><b>Type</b></TableCell>
+                            <TableCell><b>Quantity</b></TableCell>
+                            <TableCell><b>Price</b></TableCell>
+                            <TableCell><b>Sale</b></TableCell>
                             <TableCell align="right"></TableCell>
                         </TableRow>
                     </TableHead>

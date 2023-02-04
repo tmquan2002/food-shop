@@ -15,7 +15,7 @@ export default function UserList() {
 
     useEffect(() => {
         async function fetchList() {
-            const response = await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/User`)
+            const response = await fetch(`${process.env.REACT_APP_MOCKAPI_1}/User`)
                 .then((res) => res.json())
                 .catch((error) => { console.log(error) })
             const list = response
@@ -29,17 +29,17 @@ export default function UserList() {
     return (
         <>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                <div style={{ fontSize: '2rem' }}><strong>USER LIST</strong></div>
+                <div style={{ fontSize: '2rem' }}><b>USER LIST</b></div>
                 <TextField sx={{ width: 500 }} label="Search name (Enter to search)" variant="outlined" onKeyDown={handleSearch} size="small" />
             </div>
             <TableContainer sx={{ maxHeight: 550 }}>
                 <Table stickyHeader>
                     <TableHead>
                         <TableRow>
-                            <TableCell><strong>ID</strong></TableCell>
-                            <TableCell><strong>Name</strong></TableCell>
-                            <TableCell><strong>Email</strong></TableCell>
-                            <TableCell align="right"><strong>Role</strong></TableCell>
+                            <TableCell><b>ID</b></TableCell>
+                            <TableCell><b>Name</b></TableCell>
+                            <TableCell><b>Email</b></TableCell>
+                            <TableCell align="right"><b>Role</b></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

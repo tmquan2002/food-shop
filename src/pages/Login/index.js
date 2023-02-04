@@ -29,7 +29,7 @@ export default function GoogleLogin() {
         }
         //Use registered id to run google login api
         google.accounts.id.initialize({
-            client_id: "606288464608-1s87pnv2ldhmv0fg75158lmlmdi88to3.apps.googleusercontent.com",
+            client_id: `${process.env.REACT_APP_GOOGLE_CLIENT_ID}`,
             callback: handleCredentialResponse,
         });
         //Google login button
@@ -43,7 +43,7 @@ export default function GoogleLogin() {
     return (
         <>
             <div className='login-container' style={{ textAlign: 'center' }}>
-                <strong>
+                <b>
                     <Typography
                         variant="h4"
                         component="a"
@@ -56,7 +56,7 @@ export default function GoogleLogin() {
                     >
                         MY SHOP
                     </Typography>
-                </strong>
+                </b>
                 <p className='small-paragraph'>"My Shop" is a place where you can buy snacks, tools and ingredients for your daily dish or being creative</p>
                 <p className='small-paragraph'>Sign in with your google account and go shopping!</p>
                 <p style={{ color: '#FF5353', fontWeight: 'bold' }}>Sign in with google</p>

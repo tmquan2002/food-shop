@@ -22,7 +22,7 @@ export default function AddUpdateProduct() {
     //For Add, no image selected so it should be null
     //For Update, null when no image available other than that get current url
     //No Image selected or
-    const [imageUrl, setImageUrl] = useState(product.image === 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg' ? '' : product.image)
+    const [imageUrl, setImageUrl] = useState(product.image === `${process.env.REACT_APP_NO_IMAGE_PLACEHOLDER}` ? '' : product.image)
 
     //Cloudinary public_Id is the image ID, used for remove image in cloudinary media library
     const [publicId, setPublicId] = useState('')
@@ -58,7 +58,7 @@ export default function AddUpdateProduct() {
 
     //Add new product to mockapi
     async function fetchAdd(data) {
-        await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product`, {
+        await fetch(`${process.env.REACT_APP_MOCKAPI_1}/Product`, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -69,7 +69,7 @@ export default function AddUpdateProduct() {
                 quantity: Number(data.quantity),
                 price: data.price,
                 sale: data.sale,
-                image: imageUrl === '' ? 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg' : imageUrl,
+                image: imageUrl === '' ? `${process.env.REACT_APP_NO_IMAGE_PLACEHOLDER}` : imageUrl,
             })
         })
             .then((res) => res.json())
@@ -79,7 +79,7 @@ export default function AddUpdateProduct() {
 
     //Update current product to mockapi
     async function fetchUpdate(data) {
-        await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product/${product.id}`, {
+        await fetch(`${process.env.REACT_APP_MOCKAPI_1}/Product/${product.id}`, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -90,7 +90,7 @@ export default function AddUpdateProduct() {
                 quantity: Number(data.quantity),
                 price: data.price,
                 sale: data.sale,
-                image: imageUrl === '' ? 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg' : imageUrl,
+                image: imageUrl === '' ? `${process.env.REACT_APP_NO_IMAGE_PLACEHOLDER}` : imageUrl,
             })
         })
             .then((res) => res.json())
@@ -102,8 +102,8 @@ export default function AddUpdateProduct() {
     const uploadImage = async (file) => {
         const formData = new FormData();
         formData.append('file', file)
-        formData.append('upload_preset', `blooddonorpreset`);
-        const data = await fetch(`https://api.cloudinary.com/v1_1/tmquan/image/upload`, {
+        formData.append('upload_preset', `${process.env.REACT_APP_UPLOAD_PRESET}`);
+        const data = await fetch(`${process.env.REACT_APP_CLOUD_URL}/upload`, {
             method: 'POST',
             body: formData
         }).then(r => r.json());
@@ -117,16 +117,16 @@ export default function AddUpdateProduct() {
     const removeImage = async (public_Id) => {
         // console.log(public_Id)
         const timestamp = Math.floor(new Date().getTime() / 1000)
-        const string = `public_id=${public_Id}&timestamp=${timestamp}jLbWAhxfoILaqRYrGfIERFydbi0`
+        const string = `public_id=${public_Id}&timestamp=${timestamp}${process.env.REACT_APP_CLOUD_API_SECRET}`
         const sha1 = require('js-sha1');
         const signature = sha1(string)
 
         const formData = new FormData();
         formData.append('public_id', public_Id);
         formData.append('signature', signature);
-        formData.append('api_key', `412722435262794`);
+        formData.append('api_key', `${process.env.REACT_APP_CLOUD_API_KEY}`);
         formData.append('timestamp', timestamp);
-        await fetch(`https://api.cloudinary.com/v1_1/tmquan/image/destroy`, {
+        await fetch(`${process.env.REACT_APP_CLOUD_URL}/destroy`, {
             method: 'POST',
             body: formData
         }).then(r => r.json());

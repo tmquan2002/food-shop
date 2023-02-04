@@ -12,7 +12,7 @@ export default function Orders() {
 
     useEffect(() => {
         async function fetchList() {
-            const response = await fetch(`https://63bf8018e262345656ea4182.mockapi.io/mystore/v1/Order`)
+            const response = await fetch(`${process.env.REACT_APP_MOCKAPI_ORDER}`)
                 .then((res) => res.json())
                 .catch((error) => { console.log(error) })
             console.log(response)

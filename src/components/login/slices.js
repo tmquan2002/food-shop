@@ -47,7 +47,7 @@ export const userSlice = createSlice({
 export const checkUserAsync = createAsyncThunk('checkLoginUser', async (data) => {
     let currentUser = data;
     //Get the list of all user (Has logged in to the app before)
-    const response = await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/User`)
+    const response = await fetch(`${process.env.REACT_APP_MOCKAPI_1}/User`)
         .then((res) => res.json())
         .catch((error) => { console.log(error) })
     let exist = false;
@@ -67,7 +67,7 @@ export const checkUserAsync = createAsyncThunk('checkLoginUser', async (data) =>
 
     //If this is a new user, add to the mockapi list and get the id
     if (!exist) {
-        const responseAdd = await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/User`, {
+        const responseAdd = await fetch(`${process.env.REACT_APP_MOCKAPI_1}/User`, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'

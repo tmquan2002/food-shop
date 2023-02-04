@@ -46,7 +46,7 @@ export default function HomeList(props) {
 
     useEffect(() => {
         async function fetchList() {
-            const response = await fetch(`https://63b40c67ea89e3e3db54c338.mockapi.io/mystore/v1/Product`)
+            const response = await fetch(`${process.env.REACT_APP_MOCKAPI_1}/Product`)
                 .then((res) => res.json())
                 .catch((error) => { console.log(error) })
 
@@ -78,8 +78,8 @@ export default function HomeList(props) {
 
     return (
         <div className='main-list'>
-            {!props.sale ? <Typography style={{ fontSize: '1rem' }} color='primary'><strong>ALL PRODUCTS</strong></Typography>
-                : <Typography style={{ fontSize: '1rem' }} color='primary'><strong>PRODUCTS ON SALE</strong></Typography>}
+            {!props.sale ? <Typography style={{ fontSize: '1rem' }} color='primary'><b>ALL PRODUCTS</b></Typography>
+                : <Typography style={{ fontSize: '1rem' }} color='primary'><b>PRODUCTS ON SALE</b></Typography>}
             {render ? <Stack spacing={2}>
                 <div className="data-list-container">
                     {/* Prevent undefined list */}
@@ -102,9 +102,9 @@ export default function HomeList(props) {
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
-                                    <Button size="small" color='inherit' onClick={() => handleDetail(v)}><strong>More Detail</strong></Button>
-                                    {v.quantity === 0 ? <Button disabled size="small"><strong>Sold Out</strong></Button>
-                                        : <Button size="small" color='secondary' onClick={() => handleBuy(v)}><strong>ADD TO CART</strong></Button>}
+                                    <Button size="small" color='inherit' onClick={() => handleDetail(v)}><b>More Detail</b></Button>
+                                    {v.quantity === 0 ? <Button disabled size="small"><b>Sold Out</b></Button>
+                                        : <Button size="small" color='secondary' onClick={() => handleBuy(v)}><b>ADD TO CART</b></Button>}
                                 </CardActions>
                             </Card>
                         </div>

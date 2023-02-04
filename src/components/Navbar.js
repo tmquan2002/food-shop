@@ -21,7 +21,9 @@ function MainNavbar() {
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    //Check if user logged in or not
     const user = useSelector((state) => state.loginUser)
+    //Cart used to show numbers of products the cart currently have
     const cart = useSelector((state) => state.manageHome.cart)
 
     const handleLogout = () => {
@@ -75,11 +77,11 @@ function MainNavbar() {
                                     >
                                         {user.user.role === "ADMIN" ?
                                             <MenuItem key="Dashboard" onClick={handleClose}>
-                                                <Button><Link to="/dashboard" style={{ color: 'black', textDecoration: 'none' }}>DASHBOARD</Link></Button>
+                                                <Link to="/dashboard" style={{ color: 'black', textDecoration: 'none' }}><Button>DASHBOARD</Button></Link>
                                             </MenuItem>
                                             :
                                             <MenuItem key="Order" onClick={handleClose}>
-                                                <Button><Link to="/orders" style={{ color: 'black', textDecoration: 'none' }}>YOUR ORDERS</Link></Button>
+                                                <Link to="/orders" style={{ color: 'black', textDecoration: 'none' }}><Button>YOUR ORDERS</Button></Link>
                                             </MenuItem>
                                         }
                                         <Divider />
