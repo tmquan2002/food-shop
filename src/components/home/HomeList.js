@@ -50,27 +50,30 @@ export default function HomeList(props) {
                 .then((res) => res.json())
                 .catch((error) => { console.log(error) })
 
+            console.log(response)
             //Check sale, check search word and search types
-            const data = (props.sale ? response.filter(e => e.sale) : response)
-                .filter(s => s.name.toLowerCase().includes(searchValue.toLowerCase())
-                    && s.type.toLowerCase().includes(searchType.toLowerCase()))
+            if (response !== undefined) {
+                const data = (props.sale ? response.filter(e => e.sale) : response)
+                    .filter(s => s.name.toLowerCase().includes(searchValue.toLowerCase())
+                        && s.type.toLowerCase().includes(searchType.toLowerCase()))
 
-            var arrays = []
-            //Round up
-            setTotalPages(Math.ceil(data.length / itemsPerPage))
-            if (data.length <= itemsPerPage) {
-                arrays.push(data.splice(0, data.length))
-            } else {
-                while (data.length > 0) {
-                    arrays.push(data.splice(0, itemsPerPage));
+                var arrays = []
+                //Round up
+                setTotalPages(Math.ceil(data.length / itemsPerPage))
+                if (data.length <= itemsPerPage) {
+                    arrays.push(data.splice(0, data.length))
+                } else {
+                    while (data.length > 0) {
+                        arrays.push(data.splice(0, itemsPerPage));
+                    }
                 }
+                if (arrays.length === 0) {
+                    setSplitData([[]])
+                } else {
+                    setSplitData(arrays)
+                }
+                setRender(true)
             }
-            if (arrays.length === 0) {
-                setSplitData([[]])
-            } else {
-                setSplitData(arrays)
-            }
-            setRender(true)
         }
         fetchList()
 

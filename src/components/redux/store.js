@@ -33,7 +33,7 @@ const rootReducer = combineReducers({
 const persistedReducer = persistReducer(rootPersistConfig, rootReducer)
 
 //Middleware used to return functions rather than just actions
-//Allow the store to run async functions before add the result to the store
+//Allow the store to run async functions before do the actions from reducer and add to redux store
 export const store = configureStore({
     reducer: persistedReducer,
     middleware: [thunk]

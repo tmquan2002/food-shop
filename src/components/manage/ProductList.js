@@ -1,5 +1,5 @@
 import { Button, IconButton, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { productSlice } from '../manage/productSlices'
 import AddIcon from '@mui/icons-material/Add';
@@ -8,6 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function ProductList() {
     const dispatch = useDispatch()
+    const fullData = useRef([])
     const [data, setData] = useState([])
     const [render, setRender] = useState(false)
     const [renderCounter, setRenderCounter] = useState(0)
@@ -15,11 +16,9 @@ export default function ProductList() {
     // const [openAlert, setOpenAlert] = useState(false)
 
     const handleSearch = (e) => {
-        if (e.key === "Enter") {
-            setSearch(e.target.value)
-            setRender(false)
-            setRenderCounter(s => s + 1)
-        }
+        setSearch(e.target.value)
+        setRender(false)
+        setRenderCounter(s => s + 1)
     }
 
     // async function deleteProduct() {
@@ -34,11 +33,16 @@ export default function ProductList() {
 
     useEffect(() => {
         async function fetchList() {
-            const response = await fetch(`${process.env.REACT_APP_MOCKAPI_1}/Product`)
-                .then((res) => res.json())
-                .catch((error) => { console.log(error) })
-            const list = response
-            setData(list.filter(e => e.name.toLowerCase().includes(search.toLowerCase())))
+            if (renderCounter === 0) {
+                const response = await fetch(`${process.env.REACT_APP_MOCKAPI_1}/Product`)
+                    .then((res) => res.json())
+                    .catch((error) => { console.log(error) })
+                const list = response
+                fullData.current = list
+                setData(list.filter(e => e.name.toLowerCase().includes(search.toLowerCase())))
+            } else {
+                setData(fullData.current.filter(e => e.name.toLowerCase().includes(search.toLowerCase())))
+            }
             setRender(true)
         }
         fetchList()
@@ -50,7 +54,7 @@ export default function ProductList() {
                 <div style={{ fontSize: '2rem' }}><b>PRODUCT LIST</b></div>
                 <Button variant="contained" onClick={() => { dispatch(productSlice.actions.switchAdd()) }}><AddIcon />New Product</Button>
             </div>
-            <TextField fullWidth label="Search name (Enter to search)" variant="outlined" onKeyDown={handleSearch} size='small' />
+            <TextField fullWidth label="Search name" variant="outlined" onChange={handleSearch} size='small' />
             <TableContainer sx={{ maxHeight: 550 }}>
                 <Table stickyHeader>
                     <TableHead>

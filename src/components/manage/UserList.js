@@ -1,36 +1,43 @@
 import { Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function UserList() {
+    //Only fetch in first render, store entire data in fullData ref
+    const fullData = useRef([])
     const [data, setData] = useState([])
     const [render, setRender] = useState(false)
+    const [renderCount, setRenderCount] = useState(0)
     const [search, setSearch] = useState("")
 
     const handleSearch = (e) => {
-        if (e.key === "Enter") {
-            setSearch(e.target.value)
-            setRender(false)
-        }
+        setSearch(e.target.value)
+        setRender(false)
+        setRenderCount(x => x + 1)
     }
 
     useEffect(() => {
         async function fetchList() {
-            const response = await fetch(`${process.env.REACT_APP_MOCKAPI_1}/User`)
-                .then((res) => res.json())
-                .catch((error) => { console.log(error) })
-            const list = response
-            // console.log(response)
-            setData(list.filter(e => e.name.toLowerCase().includes(search.toLowerCase())))
+            if (renderCount === 0) {
+                const response = await fetch(`${process.env.REACT_APP_MOCKAPI_1}/User`)
+                    .then((res) => res.json())
+                    .catch((error) => { console.log(error) })
+                const list = response
+                // console.log(response)
+                fullData.current = list
+                setData(list.filter(e => e.name.toLowerCase().includes(search.toLowerCase())))
+            } else {
+                setData(fullData.current.filter(e => e.name.toLowerCase().includes(search.toLowerCase())))
+            }
             setRender(true)
         }
         fetchList()
-    }, [search])
+    }, [search, renderCount])
 
     return (
         <>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <div style={{ fontSize: '2rem' }}><b>USER LIST</b></div>
-                <TextField sx={{ width: 500 }} label="Search name (Enter to search)" variant="outlined" onKeyDown={handleSearch} size="small" />
+                <TextField sx={{ width: 500 }} label="Search name" variant="outlined" onChange={handleSearch} size="small" />
             </div>
             <TableContainer sx={{ maxHeight: 550 }}>
                 <Table stickyHeader>
@@ -45,7 +52,7 @@ export default function UserList() {
                     <TableBody>
                         {render ?
                             <>
-                                {data.map((info) => (
+                                {data?.map((info) => (
                                     <TableRow
                                         key={info.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
