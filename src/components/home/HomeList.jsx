@@ -1,7 +1,7 @@
 import Typography from '@mui/material/Typography';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card, CardActions, CardMedia, CardContent, Button, Skeleton } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { homeSlice } from './homeSlices'
@@ -9,6 +9,8 @@ import { notiAndSwitchPageSlices } from './notiAndSwitchPageSlices';
 
 export default function HomeList(props) {
 
+    //First fetch and instantly store in ref, used for later
+    const fullData = useRef([])
     //Numbers of product show in 1 page
     const itemsPerPage = 4
     //Each nested array will have n itemsPerPage above
@@ -20,8 +22,8 @@ export default function HomeList(props) {
     const [render, setRender] = useState(false)
     const [renderCount, setRenderCount] = useState(0)
     const dispatch = useDispatch()
-    const searchValue = useSelector((state) => state.manageHome.searchValue)
-    const searchType = useSelector((state) => state.manageHome.searchType)
+    const searchTerm = props.searchTerm
+    const searchType = props.searchType === 'All' ? '' : props.searchType
 
     const handleDetail = (data) => {
         dispatch(homeSlice.actions.viewCurrentProduct(data))
@@ -46,38 +48,36 @@ export default function HomeList(props) {
 
     useEffect(() => {
         async function fetchList() {
-            const response = await fetch(`${process.env.REACT_APP_MOCKAPI_1}/Product`)
-                .then((res) => res.json())
-                .catch((error) => { console.log(error) })
-
-            console.log(response)
-            //Check sale, check search word and search types
-            if (response !== undefined) {
-                const data = (props.sale ? response.filter(e => e.sale) : response)
-                    .filter(s => s.name.toLowerCase().includes(searchValue.toLowerCase())
+            //Only fetch on first render
+            if (renderCount === 0) {
+                const response = await fetch(`${process.env.REACT_APP_MOCKAPI_1}/Product`)
+                    .then((res) => res.json())
+                    .catch((error) => { console.log(error) })
+                fullData.current = response
+                setRenderCount(x => x + 1)
+            } else {
+                // console.log(response)
+                //Check sale, check search word and search types
+                const data = (props.sale ? fullData.current.filter(e => e.sale) : fullData.current)
+                    .filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase())
                         && s.type.toLowerCase().includes(searchType.toLowerCase()))
 
-                var arrays = []
-                //Round up
-                setTotalPages(Math.ceil(data.length / itemsPerPage))
-                if (data.length <= itemsPerPage) {
-                    arrays.push(data.splice(0, data.length))
-                } else {
+                if (data.length === 0) { setSplitData([[]]) }
+                else {
+                    var arrays = []
+                    //Round up
+                    setTotalPages(Math.ceil(data.length / itemsPerPage))
                     while (data.length > 0) {
                         arrays.push(data.splice(0, itemsPerPage));
                     }
-                }
-                if (arrays.length === 0) {
-                    setSplitData([[]])
-                } else {
                     setSplitData(arrays)
                 }
-                setRender(true)
             }
+            setRender(true)
         }
         fetchList()
 
-    }, [renderCount, searchValue, searchType])
+    }, [renderCount, searchTerm, searchType])
 
     return (
         <div className='main-list'>

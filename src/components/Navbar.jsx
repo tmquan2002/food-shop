@@ -12,7 +12,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
-import { userSlice } from '../components/login/slices'
+import { userSlice } from './login/slices'
 import { Badge, CircularProgress, Divider } from '@mui/material';
 
 

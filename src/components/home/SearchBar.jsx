@@ -3,33 +3,29 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { homeSlice } from "./homeSlices";
 
-export default function HomeSearchBar() {
+export default function HomeSearchBar(props) {
 
     const dispatch = useDispatch()
-    const [type, setType] = useState(useSelector((state) => state.manageHome.searchType))
 
     //Change search type on store
-    const handleChange = (e) => {
-        setType(e.target.value);
-        dispatch(homeSlice.actions.changeSearchType(e.target.value))
+    const handleChangeType = (e) => {
+        props.handleTypeChange(e.target.value)
     }
 
     //Change only when press Enter
-    const handleSearch = (e) => {
-        if (e.key === "Enter") {
-            dispatch(homeSlice.actions.changeSearchValue(e.target.value))
-        }
+    const handleChangeSearchTerm = (e) => {
+        props.handleSearchChange(e.target.value)
     }
 
     return (
         <div className='search-bar'>
-            <TextField sx={{ width: 300 }} label="...Search" variant="outlined" onKeyDown={handleSearch} />
+            <TextField sx={{ width: 300 }} label="...Search" variant="outlined" onChange={handleChangeSearchTerm} />
             <FormControl>
                 <InputLabel>Type</InputLabel>
                 <Select
-                    value={type === '' ? 'All' : type}
+                    value={props.searchType === '' ? 'All' : props.searchType}
                     label="Type"
-                    onChange={handleChange}
+                    onChange={handleChangeType}
                     autoWidth
                     sx={{ width: 150 }}
                 >
